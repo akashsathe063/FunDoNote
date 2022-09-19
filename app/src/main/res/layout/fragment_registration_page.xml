@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/gradiant_bg"
+    tools:context=".LoginPageFragment">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Register"
+        android:textColor="@color/green"
+        android:textSize="35dp"
+        android:textStyle="bold"
+        android:letterSpacing="0.03"/>
+    <EditText
+        android:id="@+id/emailEt"
+        android:layout_width="350dp"
+        android:layout_height="45dp"
+        android:hint="email"
+        android:textColorHint="@color/green"
+        android:textColor="@color/green"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="20dp"/>
+    <EditText
+        android:id="@+id/passEt"
+        android:layout_width="350dp"
+        android:layout_height="45dp"
+        android:hint="Password"
+        android:inputType="numberPassword"
+        android:textColorHint="@color/green"
+        android:textColor="@color/green"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="20dp"/>
+
+    <EditText
+        android:id="@+id/ConfirmPassEt"
+        android:layout_width="350dp"
+        android:layout_height="45dp"
+        android:hint="Confirm Password"
+        android:inputType="numberPassword"
+        android:textColorHint="@color/green"
+        android:textColor="@color/green"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="20dp"/>
+
+    <Button
+        android:id="@+id/btnregister"
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:background="@drawable/circular_button"
+        android:text="Register"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_marginTop="20dp"/>
+    <TextView
+        android:id="@+id/tvAlreadyAccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Already have an account? Sign In"
+        android:textStyle="bold"
+        android:textColor="@color/green"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        />
+
+
+
+
+
+
+</LinearLayout>
