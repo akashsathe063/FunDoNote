@@ -1,10 +1,8 @@
-package com.example.fundonote
+package com.example.fundonote.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.MenuItem
-import androidx.appcompat.app.ActionBarDrawerToggle
-import com.example.fundonote.databinding.ActivityMainBinding
+import com.example.fundonote.R
 
 class MainActivity : AppCompatActivity() {
 

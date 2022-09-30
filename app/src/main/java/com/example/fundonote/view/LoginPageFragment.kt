@@ -1,4 +1,4 @@
-package com.example.fundonote
+package com.example.fundonote.view
 
 import android.content.ContentValues
 import android.content.Intent
@@ -9,14 +9,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.fundonote.R
 import com.example.fundonote.databinding.FragmentLoginPageBinding
+import com.example.fundonote.model.User
+import com.example.fundonote.model.UserAuthService
+import com.example.fundonote.viewmodel.LoginViewModel
+import com.example.fundonote.viewmodel.LoginViewModelFactory
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 
 
@@ -25,6 +31,7 @@ class LoginPageFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
+    private lateinit var loginViewModel: LoginViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -32,7 +39,8 @@ class LoginPageFragment : Fragment() {
 
 
         _binding = FragmentLoginPageBinding.inflate(inflater, container, false)
-        firebaseAuth = FirebaseAuth.getInstance()
+        loginViewModel = ViewModelProvider(this,LoginViewModelFactory(UserAuthService())).get(LoginViewModel::class.java)
+         firebaseAuth = FirebaseAuth.getInstance()
         //configure google signIn
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken("690706288664-8vuvfdh45aeb1al95s4t1q3hh20892ag.apps.googleusercontent.com")
@@ -50,35 +58,19 @@ class LoginPageFragment : Fragment() {
         }
 
         binding.tvForgetPass.setOnClickListener {
-            findNavController().navigate(R.id.action_loginPageFragment_to_forgotPasswordFragment)
+//           // findNavController().navigate(R.id.action_loginPageFragment_to_forgotPasswordFragment)
+//            Navigation.findNavController(it).navigate(R.id.action_loginPageFragment_to_forgotPasswordFragment)
+            forgotPass()
+
         }
 
-        binding.btnlogin.setOnClickListener {
-            val email = binding.usernameEt.text.toString()
-            val pass = binding.passwordEt.text.toString()
-
-            if (email.isNotEmpty() && pass.isNotEmpty()) {
-                firebaseAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener {
-                    if (it.isSuccessful) {
-//                        findNavController().navigate(R.id.action_loginPageFragment_to_mainFragment)
-                        val intent = Intent(this@LoginPageFragment.requireContext(),HomeActivity::class.java)
-                        startActivity(intent)
-                    } else {
-                        Toast.makeText(context, it.exception.toString(), Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                }
-
-            } else {
-                Toast.makeText(context, "Empty fields are not allowed!!", Toast.LENGTH_SHORT).show()
-            }
-        }
+          login()
         return binding.root
     }
 
     private fun signIn() {
         val signInIntent = googleSignInClient.signInIntent
-        startActivityForResult(signInIntent,RC_SIGN_IN)
+        startActivityForResult(signInIntent, RC_SIGN_IN)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -107,7 +99,7 @@ class LoginPageFragment : Fragment() {
 //                    updateUI(user)
                     Toast.makeText(context,"google sign in succesful",Toast.LENGTH_LONG).show()
                  //   findNavController().navigate(R.id.action_loginPageFragment_to_mainFragment)
-                    val intent = Intent(this@LoginPageFragment.requireContext(),HomeActivity::class.java)
+                    val intent = Intent(this@LoginPageFragment.requireContext(), HomeActivity::class.java)
                     startActivity(intent)
                 }else{
                     Log.w(ContentValues.TAG,"SignWithCredential:Failure",it.exception)
@@ -131,4 +123,45 @@ class LoginPageFragment : Fragment() {
         _binding = null
     }
 
-}
+   private fun login(){
+       binding.btnlogin.setOnClickListener {
+           val email = binding.usernameEt.text.toString()
+           val pass = binding.passwordEt.text.toString()
+            var user = User(email = email, password = pass, userName = " ")
+           if (email.isNotEmpty() && pass.isNotEmpty()) {
+               loginViewModel.LoginUser(user)
+               loginViewModel.userLoginStatus.observe(viewLifecycleOwner, Observer {
+                   if (it.status) {
+                       Toast.makeText(context,it.msg,Toast.LENGTH_SHORT).show()
+                       val intent = Intent(this@LoginPageFragment.requireContext(), HomeActivity::class.java)
+                       startActivity(intent)
+                   } else {
+                       Toast.makeText(context,it.msg,Toast.LENGTH_SHORT).show()
+                   }
+               })
+           } else {
+               Toast.makeText(context, "Empty fields are not allowed!!", Toast.LENGTH_SHORT).show()
+           }
+       }
+   }
+    private fun forgotPass(){
+
+            val email = binding.usernameEt.text.toString()
+            var user = User(email = email, password = "", userName = "")
+            if(email.isNotEmpty()){
+                loginViewModel.forgotPassword(user)
+                loginViewModel.forgotPasswordStatus.observe(viewLifecycleOwner, Observer {
+                    if(it.status){
+                        Toast.makeText(context, it.msg, Toast.LENGTH_LONG).show()
+
+                    }else{
+                        Toast.makeText(context, it.msg, Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                })
+            }else{
+                Toast.makeText(context, "Empty fields are not allowed!!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+

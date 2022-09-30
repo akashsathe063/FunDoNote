@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:background="@drawable/gradiant_bg"
-    tools:context=".LoginPageFragment">
+    tools:context=".view.LoginPageFragment">
 
     <ImageView
         android:layout_width="350dp"
@@ -27,6 +27,7 @@
         android:layout_width="350dp"
         android:layout_height="45dp"
         android:hint="Username"
+        android:background="@drawable/edit_round"
         android:textColorHint="@color/green"
         android:textColor="@color/green"
         android:layout_marginTop="10dp"
@@ -36,12 +37,14 @@
         android:layout_width="350dp"
         android:layout_height="45dp"
         android:hint="Password"
+        android:background="@drawable/edit_round"
         android:inputType="numberPassword"
         android:textColorHint="@color/green"
         android:textColor="@color/green"
         android:layout_marginTop="10dp"
         android:paddingLeft="20dp"/>
     <TextView
+        android:id="@+id/tvForgetPass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="forget password?"
@@ -71,9 +74,10 @@
        android:layout_marginTop="10dp"
        />
 
-
-
-
-
+<com.google.android.gms.common.SignInButton
+    android:id="@+id/btngoogleSignIn"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    />
 
 </LinearLayout>
