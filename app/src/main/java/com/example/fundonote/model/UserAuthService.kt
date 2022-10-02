@@ -21,13 +21,14 @@ class UserAuthService() {
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     user.userId = firebaseAuth.currentUser?.uid.toString()
-                    var documentReference: DocumentReference = fireStoreDataBase.collection("users").document(user.userId)
-                    var  fireStoreUser =  HashMap<String, String>()
-                    fireStoreUser.put("email",user.email)
-                    fireStoreUser.put("password",user.password)
-                    fireStoreUser.put("Name",user.userName)
-                    documentReference.set(fireStoreUser).addOnSuccessListener(OnSuccessListener(){
-                 //    Log.d(it.toString(),"user profile is created for"+user.userId)
+                    var documentReference: DocumentReference =
+                        fireStoreDataBase.collection("users").document(user.userId)
+                    var fireStoreUser = HashMap<String, String>()
+                    fireStoreUser.put("email", user.email)
+                    fireStoreUser.put("password", user.password)
+                    fireStoreUser.put("Name", user.userName)
+                    documentReference.set(fireStoreUser).addOnSuccessListener(OnSuccessListener() {
+                        //    Log.d(it.toString(),"user profile is created for"+user.userId)
                         listner(AuthListner(status = true, msg = "User register Succesfully"))
                     })
 
@@ -58,6 +59,22 @@ class UserAuthService() {
             } else {
                 // Toast.makeText(context, it.exception.toString(), Toast.LENGTH_SHORT) .show()
                 listner(AuthListner(status = false, msg = "User Forgot Password failed"))
+            }
+        }
+    }
+
+    fun readFromFireStore(user: User, listner: (ProfileAuthListner) -> Unit) {
+      lateinit var userInformation:User
+        user.userId = firebaseAuth.currentUser!!.uid
+        var documentReference: DocumentReference =
+            fireStoreDataBase.collection("users").document(user.userId)
+        documentReference.get().addOnCompleteListener {
+            if (it.isSuccessful) {
+                  userInformation = User(it.result.getString("userId").toString(),it.result.getString("Name").toString(),
+                      it.result.getString("email").toString(),it.result.getString("password").toString())
+//                binding.dialogEmailtv.text =" ${it.result.getString("email").toString()}"
+//                binding.dialognametv.text = " ${it.result.getString("Name").toString()}"
+                listner(ProfileAuthListner(status = true, msg = "read from fireStore successful", user = userInformation))
             }
         }
     }

@@ -94,25 +94,17 @@ class LoginPageFragment : Fragment() {
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener{
                 if(it.isSuccessful){
-//                    Log.d(ContentValues.TAG,"SignInWithCredential:Success")
-//                    val user = firebaseAuth.currentUser
-//                    updateUI(user)
+
                     Toast.makeText(context,"google sign in succesful",Toast.LENGTH_LONG).show()
-                 //   findNavController().navigate(R.id.action_loginPageFragment_to_mainFragment)
                     val intent = Intent(this@LoginPageFragment.requireContext(), HomeActivity::class.java)
                     startActivity(intent)
                 }else{
                     Log.w(ContentValues.TAG,"SignWithCredential:Failure",it.exception)
-                  //  updateUI(null)
+
                 }
 
             }
     }
-//    private fun updateUI(user:FirebaseUser?){
-//        if(user != null){
-//            findNavController().navigate(R.id.action_loginPageFragment_to_mainFragment)
-//        }
-//    }
     companion object{
         const val RC_SIGN_IN = 1001
 
@@ -127,7 +119,7 @@ class LoginPageFragment : Fragment() {
        binding.btnlogin.setOnClickListener {
            val email = binding.usernameEt.text.toString()
            val pass = binding.passwordEt.text.toString()
-            var user = User(email = email, password = pass, userName = " ")
+            var user = User(userName = " ", email = email, password = pass)
            if (email.isNotEmpty() && pass.isNotEmpty()) {
                loginViewModel.LoginUser(user)
                loginViewModel.userLoginStatus.observe(viewLifecycleOwner, Observer {
@@ -147,7 +139,7 @@ class LoginPageFragment : Fragment() {
     private fun forgotPass(){
 
             val email = binding.usernameEt.text.toString()
-            var user = User(email = email, password = "", userName = "")
+            var user = User(userName = "", email = email, password = "")
             if(email.isNotEmpty()){
                 loginViewModel.forgotPassword(user)
                 loginViewModel.forgotPasswordStatus.observe(viewLifecycleOwner, Observer {

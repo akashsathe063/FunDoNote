@@ -2,74 +2,66 @@
 <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/MainDrawer"
     android:layout_width="match_parent"
-    android:id="@+id/main_drawer"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:viewBindingIgnore="false"
     tools:context=".view.HomeActivity">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
 
-<!--        <com.google.android.material.appbar.AppBarLayout-->
-<!--            android:id="@+id/appBar_Layout"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent">-->
+                <com.google.android.material.appbar.AppBarLayout
+                    android:id="@+id/appBarLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-<!--            <com.google.android.material.appbar.MaterialToolbar-->
-<!--                android:id="@+id/ToolBar"-->
-<!--                style="@style/Widget.MaterialComponents.Toolbar.Primary"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="?attr/actionBarSize"-->
-<!--                app:menu="@menu/search_view"-->
-<!--                app:navigationIcon="@drawable/ic_baseline_menu_24"-->
-<!--                app:title="@string/app_name" />-->
+                    <androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/TOOLBAR"
+                        android:background="@color/green"
+                        app:navigationIcon="@drawable/ic_baseline_menu_24">
 
-<!--        </com.google.android.material.appbar.AppBarLayout>-->
 
-<!--         <include layout="@layout/my_toolbar"/> -->
-        <com.google.android.material.appbar.AppBarLayout
+                    </androidx.appcompat.widget.Toolbar>
+
+                </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.fragment.app.FragmentContainerView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/ToolBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
-
-        </com.google.android.material.appbar.AppBarLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
+            android:id="@+id/fragmaintContainer"
             android:layout_height="match_parent"
-            android:id="@+id/frameLayout"/>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btnfloating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="25dp"
-            android:layout_marginEnd="25dp"
-            android:layout_marginBottom="52dp"
-            android:src="@drawable/ic_baseline_add_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            tools:ignore="MissingConstraints" />
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
 
-    </LinearLayout>
+        </androidx.fragment.app.FragmentContainerView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:id="@+id/btnfloating"
+            android:layout_height="wrap_content"
+            android:layout_margin="32dp"
+             android:src="@drawable/ic_baseline_add_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <com.google.android.material.navigation.NavigationView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_gravity="start"
         app:headerLayout="@layout/nav_header"
-        android:id="@+id/nav_view"
-        app:menu="@menu/nav_menue"
-        android:layout_gravity="start">
+        app:menu="@menu/nav_menue">
 
     </com.google.android.material.navigation.NavigationView>
 

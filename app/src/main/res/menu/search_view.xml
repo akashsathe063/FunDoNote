@@ -5,14 +5,13 @@
     android:id="@+id/search"
     android:title="search"
     android:icon="@drawable/ic_baseline_search_24"
-    app:showAsAction="ifRoom"
+    app:showAsAction="always"
     app:actionViewClass="androidx.appcompat.widget.SearchView" />
 
     <item
         android:id="@+id/account_Profile"
         android:title="account_Profiler"
-        android:onClick="true"
-        android:icon="@drawable/ic_baseline_account_circle_24"
-        app:showAsAction="ifRoom"
+        app:actionLayout="@layout/profile_menu_layout"
+        app:showAsAction="always"
         />
 </menu>

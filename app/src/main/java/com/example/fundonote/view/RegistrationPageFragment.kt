@@ -15,9 +15,6 @@ import com.example.fundonote.model.User
 import com.example.fundonote.model.UserAuthService
 import com.example.fundonote.viewmodel.RegisterViewModelFactory
 import com.example.fundonote.viewmodel.ResgisterViewModel
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
 
 
 class RegistrationPageFragment : Fragment() {
@@ -55,7 +52,7 @@ class RegistrationPageFragment : Fragment() {
             val pass = binding.passEt.text.toString()
             val confirmPass = binding.ConfirmPassEt.text.toString()
             val name = binding.nameEt.text.toString()
-            var user = User(email = email, password = pass, userName = name)
+            var user = User(userName = name, email = email, password = "")
             if (email.isNotEmpty() && pass.isNotEmpty() && confirmPass.isNotEmpty()) {
                 if (pass == confirmPass) {
                     registerViewModel.registerUser(user)
