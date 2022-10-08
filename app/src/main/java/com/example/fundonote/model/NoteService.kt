@@ -44,25 +44,20 @@ class NoteService() {
 
     fun getNoteData(listner: (NoteAuthListener) -> Unit) {
         var userId: String = firebaseAuth.currentUser?.uid.toString()
-
         fireStoreDataBase = FirebaseFirestore.getInstance()
-        //             noteArrayList = arrayListOf<Notes>()
         fireStoreDataBase.collection("users").document(userId).collection("Notes").get()
             .addOnCompleteListener {
                 val noteList = ArrayList<Notes>()
                 if (it != null && it.isSuccessful) {
                     for (document in it.result) {
-
-                        val userNote: Notes = document.toObject(
-                            Notes::class.java
-                        )
+                        val noteTitle:String = document["NoteTitle"].toString()
+                        val noteContent:String = document["NoteDescription"].toString()
+                        val noteId:String = document["NoteId"].toString()
+                        val userNote: Notes = Notes(noteId = noteId,noteTitle = noteTitle, noteDescription = noteContent)
                         noteList.add(userNote)
                     }
 
-//                    for (note in noteList){
-//                        print()
-//                    }
-                        Log.d("NoteService", noteList.size.toString())
+                    Log.d("NoteService", noteList.size.toString())
                 }
                 listner(
                     NoteAuthListener(
