@@ -34,13 +34,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         >
-        <Button
-            android:id="@+id/btnSaveimg"
-            android:text="save"
-            android:layout_width="wrap_content"
-            android:layout_marginRight="10dp"
-            android:background="@drawable/edit_round"
-            android:layout_height="wrap_content"/>
+<!--        <Button-->
+<!--            android:id="@+id/btnSaveimg"-->
+<!--            android:text="save"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_marginRight="10dp"-->
+<!--            android:background="@drawable/edit_round"-->
+<!--            android:layout_height="wrap_content"/>-->
         <Button
             android:id="@+id/btnuploadimg"
             android:text="upload"

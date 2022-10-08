@@ -18,4 +18,11 @@ class ProfileViewModel(private var userAuthService: UserAuthService):ViewModel()
             }
         }
     }
+    fun displayImage(user: User){
+        userAuthService.displayImage(user){
+            if(it.status){
+                _ProfileStatus.value = it
+            }
+        }
+    }
 }

@@ -10,8 +10,10 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.MenuItemCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.fundonote.R
+import com.example.fundonote.SaveNote
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -35,10 +37,12 @@ class HomeActivity : AppCompatActivity() {
         actionBarDrawerToggle.isDrawerIndicatorEnabled = true
         actionBarDrawerToggle.syncState()
 
+        replaceFragment(SaveNote())
+
         floatingButton.setOnClickListener {
             val fragmentManager = supportFragmentManager
             val fragmentTransaction = fragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.fragmaintContainer, Note())
+            fragmentTransaction.replace(R.id.fragmaintContainer, NoteFragment())
             fragmentTransaction.commit()
             floatingButton.hide()
         }
@@ -71,6 +75,12 @@ class HomeActivity : AppCompatActivity() {
            }
         }
         return super.onOptionsItemSelected(item)
+    }
+    fun replaceFragment(fragment: Fragment){
+        val supportFragment = supportFragmentManager
+        val fragment_Transaction = supportFragment.beginTransaction()
+        fragment_Transaction.replace(R.id.fragmaintContainer, fragment)
+        fragment_Transaction.commit()
     }
 
 }

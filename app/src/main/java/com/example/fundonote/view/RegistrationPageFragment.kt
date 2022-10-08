@@ -1,5 +1,4 @@
 package com.example.fundonote.view
-
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -52,7 +51,7 @@ class RegistrationPageFragment : Fragment() {
             val pass = binding.passEt.text.toString()
             val confirmPass = binding.ConfirmPassEt.text.toString()
             val name = binding.nameEt.text.toString()
-            var user = User(userName = name, email = email, password = "")
+            var user = User(userName = name, email = email, password = pass)
             if (email.isNotEmpty() && pass.isNotEmpty() && confirmPass.isNotEmpty()) {
                 if (pass == confirmPass) {
                     registerViewModel.registerUser(user)
