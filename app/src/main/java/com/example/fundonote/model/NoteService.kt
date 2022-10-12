@@ -1,13 +1,12 @@
 package com.example.fundonote.model
 
-import android.nfc.Tag
 import android.util.Log
+import com.example.fundonote.view.MyAdapter
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.google.firebase.storage.FirebaseStorage
 import java.util.*
-import com.google.firebase.firestore.EventListener
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -50,10 +49,14 @@ class NoteService() {
                 val noteList = ArrayList<Notes>()
                 if (it != null && it.isSuccessful) {
                     for (document in it.result) {
-                        val noteTitle:String = document["NoteTitle"].toString()
-                        val noteContent:String = document["NoteDescription"].toString()
-                        val noteId:String = document["NoteId"].toString()
-                        val userNote: Notes = Notes(noteId = noteId,noteTitle = noteTitle, noteDescription = noteContent)
+                        val noteTitle: String = document["NoteTitle"].toString()
+                        val noteContent: String = document["NoteDescription"].toString()
+                        val noteId: String = document["NoteId"].toString()
+                        val userNote: Notes = Notes(
+                            noteId = noteId,
+                            noteTitle = noteTitle,
+                            noteDescription = noteContent
+                        )
                         noteList.add(userNote)
                     }
 
@@ -69,7 +72,57 @@ class NoteService() {
 
             }
     }
+
+    fun removeNote(noteId: String, listener: (AuthListner) -> Unit) {
+        var userId: String = firebaseAuth.currentUser?.uid.toString()
+        fireStoreDataBase = FirebaseFirestore.getInstance()
+        fireStoreDataBase.collection("users").document(userId).collection("Notes").document(noteId)
+            .delete()
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    listener(
+                        AuthListner(
+                            status = true,
+                            "note delete Successfully"
+                        )
+                    )
+                }
+            }
+    }
+
+    fun readSingleNote(noteId: String, listner: (NoteAuthListener) -> Unit) {
+        var userId: String = firebaseAuth.currentUser?.uid.toString()
+        val noteList = ArrayList<Notes>()
+        fireStoreDataBase = FirebaseFirestore.getInstance()
+        fireStoreDataBase.collection("users").document(userId).collection("Notes").document(noteId)
+            .get()
+            .addOnCompleteListener {
+                val noteList = ArrayList<Notes>()
+                if (it != null && it.isSuccessful) {
+                    val userNote: Notes = Notes(
+                        it.result.getString("NoteId").toString(),
+                        it.result.getString("NoteTitle").toString(),
+                        it.result.getString("NoteDescription").toString()
+
+                    )
+                    noteList.add(userNote)
+
+
+                }
+
+                Log.d("NoteService", noteList.size.toString())
+            }
+        listner(
+            NoteAuthListener(
+                noteList = noteList,
+                status = true,
+                msg = "fetch note Successfully"
+            )
+        )
+    }
 }
+
+
 
 
 

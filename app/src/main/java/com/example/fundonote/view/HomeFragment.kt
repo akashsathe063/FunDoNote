@@ -11,20 +11,14 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.fundonote.databinding.FragmentNoteBinding
-import com.example.fundonote.databinding.FragmentProfileBinding
 import com.example.fundonote.databinding.FragmentSaveNoteBinding
-import com.example.fundonote.model.MyAdapter
+import com.example.fundonote.view.MyAdapter
 import com.example.fundonote.model.NoteService
 import com.example.fundonote.model.Notes
-import com.example.fundonote.model.User
 import com.example.fundonote.viewmodel.NoteViewModel
 import com.example.fundonote.viewmodel.NoteViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
-import com.google.firebase.firestore.EventListener
-import com.google.firebase.firestore.ktx.toObject
-import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -49,7 +43,7 @@ class SaveNote : Fragment() {
 
         noteArrayList = arrayListOf<Notes>()
 
-        noteAdapter = MyAdapter(noteArrayList)
+        noteAdapter = MyAdapter(noteArrayList, requireContext())
 
         recyclerView.adapter = noteAdapter
 
@@ -63,7 +57,7 @@ class SaveNote : Fragment() {
               if (it.status){
                   Log.d("SaveNoteFragment",it.noteList.size.toString())
                   Toast.makeText(context,it.msg, Toast.LENGTH_SHORT).show()
-                  recyclerView.adapter = MyAdapter(it.noteList)
+                  recyclerView.adapter = MyAdapter(it.noteList,requireContext())
               }
           })
       }
@@ -95,6 +89,7 @@ class SaveNote : Fragment() {
 //
 //                   })
 //       }
+
 
     }
 
