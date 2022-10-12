@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -30,7 +31,6 @@ import com.google.firebase.firestore.auth.User
 class NoteFragment : Fragment() {
     private var _binding: FragmentNoteBinding? = null
     private val binding get() = _binding!!
-    lateinit var userId: String
     lateinit var noteViewModel: NoteViewModel
 
     override fun onCreateView(
@@ -45,8 +45,7 @@ class NoteFragment : Fragment() {
             NoteViewModelFactory(NoteService())
         ).get(NoteViewModel::class.java)
 
-
-
+        updateNote()
         saveNote()
         return binding.root
     }
@@ -78,17 +77,24 @@ class NoteFragment : Fragment() {
     }
 
     private fun updateNote() {
-        //fetch noteId from adapter to notefragment()
 
-        val args = this.arguments
-        val noteId = args?.get("noteId").toString()
-        noteViewModel.updateNote(noteId = noteId)
-        noteViewModel.updateNotes.observe(viewLifecycleOwner, Observer {
-            if (it.status){
-                binding.noteTitle.text
-            }
-        })
+        binding.btnSaveNote.setOnClickListener {
+            //fetch noteId from adapter to notefragment()
+            val args = this.arguments
+            val noteId = args?.get("noteId").toString()
+            noteViewModel.updateNote(noteId = noteId)
+            noteViewModel.updateNotes.observe(viewLifecycleOwner, Observer {
+                if (it.status) {
+                    var title: TextView = binding.noteTitle
+                    var description: TextView = binding.noteContent
+//                    binding.noteTitle.setText(it.note.noteTitle)
+//                    binding.noteContent.setText(it.note.noteDescription)
+                    title.text = it.note.noteTitle
+                    description.text = it.note.noteDescription
+                }
+            })
 
+        }
     }
 //    private fun removeNote(){
 //        val args = this.arguments

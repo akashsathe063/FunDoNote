@@ -90,35 +90,34 @@ class NoteService() {
             }
     }
 
-    fun updateNotes(noteId: String, listner: (NoteAuthListener) -> Unit) {
+    fun updateNotes(noteId: String, listner: (UpdateNoteAuthListner) -> Unit) {
         var userId: String = firebaseAuth.currentUser?.uid.toString()
-        val noteList = ArrayList<Notes>()
         fireStoreDataBase = FirebaseFirestore.getInstance()
         fireStoreDataBase.collection("users").document(userId).collection("Notes").document(noteId)
             .get()
             .addOnCompleteListener {
-                val noteList = ArrayList<Notes>()
-                if (it != null && it.isSuccessful) {
+
+                if (it.isSuccessful) {
                     val userNote: Notes = Notes(
                         it.result.getString("NoteId").toString(),
                         it.result.getString("NoteTitle").toString(),
                         it.result.getString("NoteDescription").toString()
 
                     )
-                    noteList.add(userNote)
+                    listner(
+                        UpdateNoteAuthListner(
+                            note = userNote,
+                            status = true,
+                            msg = "fetch note Successfully"
+                        )
+                    )
 
 
                 }
 
-                Log.d("NoteService", noteList.size.toString())
+        //        Log.d("NoteService", noteList.size.toString())
             }
-        listner(
-            NoteAuthListener(
-                noteList = noteList,
-                status = true,
-                msg = "fetch note Successfully"
-            )
-        )
+
     }
 }
 
