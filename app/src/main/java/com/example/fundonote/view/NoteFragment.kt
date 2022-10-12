@@ -40,7 +40,12 @@ class NoteFragment : Fragment() {
     ): View? {
         _binding = FragmentNoteBinding.inflate(inflater, container, false)
 
-        noteViewModel = ViewModelProvider(this,NoteViewModelFactory(NoteService())).get(NoteViewModel::class.java)
+        noteViewModel = ViewModelProvider(
+            this,
+            NoteViewModelFactory(NoteService())
+        ).get(NoteViewModel::class.java)
+
+
 
         saveNote()
         return binding.root
@@ -54,14 +59,14 @@ class NoteFragment : Fragment() {
             if (noteTitle.isNotEmpty() && noteDescription.isNotEmpty()) {
                 noteViewModel.userNote(note)
                 noteViewModel.userNoteStatus.observe(viewLifecycleOwner, Observer {
-                    if(it.status){
+                    if (it.status) {
                         Toast.makeText(context, it.msg, Toast.LENGTH_SHORT).show()
                         val transaction =
                             (context as AppCompatActivity).supportFragmentManager.beginTransaction()
                         transaction.replace(R.id.fragmaintContainer, SaveNote())
                         transaction.addToBackStack(null)
                         transaction.commit()
-                    }else{
+                    } else {
                         Toast.makeText(context, it.msg, Toast.LENGTH_SHORT).show()
                     }
                 })
@@ -71,5 +76,29 @@ class NoteFragment : Fragment() {
 
         }
     }
+
+    private fun updateNote() {
+        //fetch noteId from adapter to notefragment()
+
+        val args = this.arguments
+        val noteId = args?.get("noteId").toString()
+        noteViewModel.updateNote(noteId = noteId)
+        noteViewModel.updateNotes.observe(viewLifecycleOwner, Observer {
+            if (it.status){
+                binding.noteTitle.text
+            }
+        })
+
+    }
+//    private fun removeNote(){
+//        val args = this.arguments
+//        val noteId = args?.get("noteId").toString()
+//        noteViewModel.removeNote(noteId)
+//        noteViewModel.deleteNotes.observe(viewLifecycleOwner,Observer{
+//            if (it.status){
+//               Toast.makeText(context,it.msg,Toast.LENGTH_LONG).show()
+//            }
+//        })
+//    }
 
 }

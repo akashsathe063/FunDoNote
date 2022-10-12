@@ -14,7 +14,7 @@ class NoteViewModel(private var noteService: NoteService): ViewModel() {
     val userNoteStatus = _UserNoteStatus as LiveData<AuthListner>
     val getNotes = _GetNotes as LiveData<NoteAuthListener>
     val deleteNotes = _DeleteNotes as LiveData<AuthListner>
-    val updateNote = _UpdateNote as LiveData<NoteAuthListener>
+    val updateNotes = _UpdateNote as LiveData<NoteAuthListener>
     fun userNote(note: Notes){
         noteService.saveNote(note){
             if(it.status){

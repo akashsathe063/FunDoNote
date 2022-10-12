@@ -1,6 +1,8 @@
 package com.example.fundonote.view
 
+import android.app.FragmentManager
 import android.content.Context
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +21,7 @@ import com.example.fundonote.model.Notes
 import com.example.fundonote.viewmodel.NoteViewModel
 import com.example.fundonote.viewmodel.NoteViewModelFactory
 
-class MyAdapter(var noteList: ArrayList<Notes>,var context:Context,val listner: OnItemClickListner) : RecyclerView.Adapter<MyAdapter.MyViewHolder>(),View.OnClickListener {
+class MyAdapter(var noteList: ArrayList<Notes>,var context:Context) : RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
 
 
     var allNote = mutableListOf<Notes>().apply {
@@ -47,13 +49,17 @@ class MyAdapter(var noteList: ArrayList<Notes>,var context:Context,val listner: 
             popupMenu.setOnMenuItemClickListener {
                 when (it.itemId) {
                     id.editTv -> {
-//                        val transaction =
-//                            (context as AppCompatActivity).supportFragmentManager.beginTransaction()
-//                        transaction.replace(id.fragmaintContainer, NoteFragment())
-//                        transaction.addToBackStack(null)
-//                        transaction.commit()
-                        var fragment:NoteFragment
-                          Log.d("MyAdapter", "${note.noteId}")
+                        val transaction =
+                            (context as AppCompatActivity).supportFragmentManager.beginTransaction()
+                        var bundle = Bundle()
+                        bundle.putString("noteId",note.noteId)
+                        NoteFragment().arguments = bundle
+                        transaction.replace(id.fragmaintContainer, NoteFragment())
+                        transaction.addToBackStack(null)
+                        transaction.commit()
+
+                      //    Log.d("MyAdapter", "${note.noteId}")
+
 
                     }
 
@@ -98,12 +104,5 @@ class MyAdapter(var noteList: ArrayList<Notes>,var context:Context,val listner: 
 
     }
 
-    interface OnItemClickListner {
-        fun onItemClick(noteId:String)
 
-    }
-
-    override fun onClick(view: View?) {
-      //  listner.onItemClick(noteId = "${noteList.get(position).noteId.toString()}" )
-    }
 }

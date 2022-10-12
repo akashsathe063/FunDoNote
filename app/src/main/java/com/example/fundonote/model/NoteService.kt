@@ -90,7 +90,7 @@ class NoteService() {
             }
     }
 
-    fun readSingleNote(noteId: String, listner: (NoteAuthListener) -> Unit) {
+    fun updateNotes(noteId: String, listner: (NoteAuthListener) -> Unit) {
         var userId: String = firebaseAuth.currentUser?.uid.toString()
         val noteList = ArrayList<Notes>()
         fireStoreDataBase = FirebaseFirestore.getInstance()
