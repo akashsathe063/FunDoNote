@@ -12,26 +12,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.fundonote.R
-import com.example.fundonote.SaveNote
-import com.example.fundonote.databinding.FragmentLoginPageBinding
+import com.example.fundonote.HomeFragment
 import com.example.fundonote.databinding.FragmentNoteBinding
-import com.example.fundonote.model.AuthListner
 import com.example.fundonote.model.NoteService
 import com.example.fundonote.model.Notes
-import com.example.fundonote.model.UserAuthService
 import com.example.fundonote.viewmodel.NoteViewModel
 import com.example.fundonote.viewmodel.NoteViewModelFactory
-import com.google.android.gms.tasks.OnSuccessListener
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.auth.User
 
 
 class NoteFragment : Fragment() {
     private var _binding: FragmentNoteBinding? = null
     private val binding get() = _binding!!
     lateinit var noteViewModel: NoteViewModel
+    lateinit var noteId: String
 
     override fun onCreateView(
 
@@ -44,9 +37,10 @@ class NoteFragment : Fragment() {
             this,
             NoteViewModelFactory(NoteService())
         ).get(NoteViewModel::class.java)
-
-        updateNote()
+        noteId = arguments?.getString("noteId").toString()
+        readSingleNote()
         saveNote()
+        updateNote()
         return binding.root
     }
 
@@ -62,7 +56,7 @@ class NoteFragment : Fragment() {
                         Toast.makeText(context, it.msg, Toast.LENGTH_SHORT).show()
                         val transaction =
                             (context as AppCompatActivity).supportFragmentManager.beginTransaction()
-                        transaction.replace(R.id.fragmaintContainer, SaveNote())
+                        transaction.replace(R.id.fragmaintContainer, HomeFragment())
                         transaction.addToBackStack(null)
                         transaction.commit()
                     } else {
@@ -76,35 +70,42 @@ class NoteFragment : Fragment() {
         }
     }
 
-    private fun updateNote() {
+    private fun readSingleNote() {
 
-        binding.btnSaveNote.setOnClickListener {
-            //fetch noteId from adapter to notefragment()
-            val args = this.arguments
-            val noteId = args?.get("noteId").toString()
-            noteViewModel.updateNote(noteId = noteId)
-            noteViewModel.updateNotes.observe(viewLifecycleOwner, Observer {
-                if (it.status) {
-                    var title: TextView = binding.noteTitle
-                    var description: TextView = binding.noteContent
+        //fetch noteId from adapter to notefragment()
+
+
+        Log.d("notefragment", "${noteId}")
+        noteViewModel.readSingleNote(noteId)
+        noteViewModel.readSigleNote.observe(viewLifecycleOwner, Observer {
+            if (it.status) {
+                var title: TextView = binding.noteTitle
+                var description: TextView = binding.noteContent
 //                    binding.noteTitle.setText(it.note.noteTitle)
 //                    binding.noteContent.setText(it.note.noteDescription)
-                    title.text = it.note.noteTitle
-                    description.text = it.note.noteDescription
+                title.text = it.note.noteTitle
+                description.text = it.note.noteDescription
+            }
+        })
+
+    }
+
+    private fun updateNote() {
+        binding.btnSaveNote.setOnClickListener {
+            noteViewModel.updateNote(noteId)
+            noteViewModel.updateNotes.observe(viewLifecycleOwner, Observer {
+                if (it.status) {
+                    Toast.makeText(context, it.msg, Toast.LENGTH_SHORT).show()
+                    val transaction =
+                        (context as AppCompatActivity).supportFragmentManager.beginTransaction()
+                    transaction.replace(R.id.fragmaintContainer, HomeFragment())
+                    transaction.addToBackStack(null)
+                    transaction.commit()
+                } else {
+                    Toast.makeText(context, it.msg, Toast.LENGTH_SHORT).show()
                 }
             })
-
         }
-    }
-//    private fun removeNote(){
-//        val args = this.arguments
-//        val noteId = args?.get("noteId").toString()
-//        noteViewModel.removeNote(noteId)
-//        noteViewModel.deleteNotes.observe(viewLifecycleOwner,Observer{
-//            if (it.status){
-//               Toast.makeText(context,it.msg,Toast.LENGTH_LONG).show()
-//            }
-//        })
-//    }
 
+    }
 }

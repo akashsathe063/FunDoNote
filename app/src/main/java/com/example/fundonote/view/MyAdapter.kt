@@ -1,6 +1,5 @@
 package com.example.fundonote.view
 
-import android.app.FragmentManager
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -11,17 +10,14 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fundonote.R
 import com.example.fundonote.R.*
-import com.example.fundonote.model.NoteService
+import com.example.fundonote.HomeFragment
 import com.example.fundonote.model.Notes
-import com.example.fundonote.viewmodel.NoteViewModel
-import com.example.fundonote.viewmodel.NoteViewModelFactory
 
-class MyAdapter(var noteList: ArrayList<Notes>,var context:Context) : RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
+class MyAdapter(var noteList: ArrayList<Notes>, var context: Context) :
+    RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
 
 
     var allNote = mutableListOf<Notes>().apply {
@@ -30,6 +26,10 @@ class MyAdapter(var noteList: ArrayList<Notes>,var context:Context) : RecyclerVi
         notifyDataSetChanged()
     }
 
+    //    fun deleteNote(position: Int){
+//        noteList.removeAt(position)
+//        notifyItemRemoved(position)
+//    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(layout.note_item_view, parent, false)
@@ -49,16 +49,17 @@ class MyAdapter(var noteList: ArrayList<Notes>,var context:Context) : RecyclerVi
             popupMenu.setOnMenuItemClickListener {
                 when (it.itemId) {
                     id.editTv -> {
+                        val fragment = NoteFragment()
                         val transaction =
                             (context as AppCompatActivity).supportFragmentManager.beginTransaction()
                         var bundle = Bundle()
-                        bundle.putString("noteId",note.noteId)
-                        NoteFragment().arguments = bundle
-                        transaction.replace(id.fragmaintContainer, NoteFragment())
+                        bundle.putString("noteId", note.noteId)
+                        fragment.arguments = bundle
+                        transaction.replace(R.id.fragmaintContainer, fragment)
                         transaction.addToBackStack(null)
                         transaction.commit()
 
-                      //    Log.d("MyAdapter", "${note.noteId}")
+                            Log.d("MyAdapter", "${note.noteId}")
 
 
                     }
@@ -66,6 +67,14 @@ class MyAdapter(var noteList: ArrayList<Notes>,var context:Context) : RecyclerVi
                     id.Delete -> {
 
                         //   noteViewModel.deleteNotes.observe()
+                        val transaction =
+                            (context as AppCompatActivity).supportFragmentManager.beginTransaction()
+                        var bundle = Bundle()
+                        bundle.putString("noteId", note.noteId)
+                        HomeFragment().arguments = bundle
+                        transaction.replace(R.id.fragmaintContainer, HomeFragment())
+                        transaction.addToBackStack(null)
+                        transaction.commit()
 
                     }
 
@@ -86,11 +95,10 @@ class MyAdapter(var noteList: ArrayList<Notes>,var context:Context) : RecyclerVi
         return allNote.size
     }
 
-    inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+    inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var noteTitle: TextView
         var noteDescription: TextView
         var mMenues: ImageView
-
 
 
         init {

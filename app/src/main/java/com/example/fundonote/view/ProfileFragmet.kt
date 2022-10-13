@@ -1,30 +1,20 @@
 package com.example.fundonote.view
 
 import android.app.Activity
-import android.app.Activity.RESULT_OK
-import android.app.Fragment
-import android.app.ProgressDialog
-import android.app.appsearch.AppSearchResult.RESULT_OK
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
-import androidx.core.provider.FontsContractCompat.FontRequestCallback.RESULT_OK
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.get
 import com.bumptech.glide.Glide
 import com.example.fundonote.R
-import com.example.fundonote.SaveNote
-import com.example.fundonote.databinding.FragmentLoginPageBinding
 import com.example.fundonote.databinding.FragmentProfileBinding
 import com.example.fundonote.model.User
 import com.example.fundonote.model.UserAuthService
@@ -32,16 +22,6 @@ import com.example.fundonote.viewmodel.ProfileUploadViewModel
 import com.example.fundonote.viewmodel.ProfileUploadViewModelFactory
 import com.example.fundonote.viewmodel.ProfileViewModel
 import com.example.fundonote.viewmodel.ProfileViewModelFactory
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.EventListener
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
-import java.net.URI
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 class ProfileFragmet : DialogFragment() {

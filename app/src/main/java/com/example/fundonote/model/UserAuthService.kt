@@ -6,7 +6,6 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.fundonote.R
-import com.example.fundonote.SaveNote
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference

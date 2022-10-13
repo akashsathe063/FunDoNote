@@ -16,7 +16,7 @@ class NoteService() {
     private lateinit var firebaseStorage: FirebaseStorage
     private lateinit var notes: Notes
     private lateinit var myAdapter: MyAdapter
-    //   private lateinit
+
 
     init {
         firebaseAuth = FirebaseAuth.getInstance()
@@ -90,7 +90,7 @@ class NoteService() {
             }
     }
 
-    fun updateNotes(noteId: String, listner: (UpdateNoteAuthListner) -> Unit) {
+    fun readSingleNote(noteId: String, listner: (UpdateNoteAuthListner) -> Unit) {
         var userId: String = firebaseAuth.currentUser?.uid.toString()
         fireStoreDataBase = FirebaseFirestore.getInstance()
         fireStoreDataBase.collection("users").document(userId).collection("Notes").document(noteId)
@@ -115,8 +115,24 @@ class NoteService() {
 
                 }
 
-        //        Log.d("NoteService", noteList.size.toString())
+                //        Log.d("NoteService", noteList.size.toString())
             }
+
+    }
+
+    fun updateNote(noteId: String, listner: (AuthListner) -> Unit) {
+        var userId: String = firebaseAuth.currentUser?.uid.toString()
+        var fireStoreNote = HashMap<String, String>()
+        fireStoreNote.put("NoteTitle", notes.noteTitle)
+        fireStoreNote.put("NoteDescription", notes.noteDescription)
+        var documentReference: DocumentReference =
+            fireStoreDataBase.collection("users").document(userId).collection("Notes")
+                .document(noteId)
+
+        documentReference.set(fireStoreNote).addOnSuccessListener(OnSuccessListener() {
+            listner(AuthListner(status = true, msg = "note save Succesfully"))
+
+        })
 
     }
 }

@@ -19,10 +19,12 @@ import com.example.fundonote.viewmodel.NoteViewModel
 import com.example.fundonote.viewmodel.NoteViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
+import com.google.firebase.firestore.FieldValue.delete
+import java.nio.file.Files.delete
 import kotlin.collections.ArrayList
 
 
-class SaveNote : Fragment() {
+class HomeFragment : Fragment() {
     private var _binding: FragmentSaveNoteBinding? = null
     private val binding get() = _binding!!
     private lateinit var recyclerView : RecyclerView
@@ -31,6 +33,7 @@ class SaveNote : Fragment() {
     private lateinit var noteAdapter: MyAdapter
     private lateinit var dataBase:FirebaseFirestore
     private lateinit var auth : FirebaseAuth
+    private lateinit var noteId : String
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,7 +49,8 @@ class SaveNote : Fragment() {
         noteAdapter = MyAdapter(noteArrayList, requireContext())
 
         recyclerView.adapter = noteAdapter
-
+         noteId = arguments?.getString("noteId").toString()
+        removeNote()
         readNote()
      //   getNote()
         return binding.root
@@ -61,34 +65,15 @@ class SaveNote : Fragment() {
               }
           })
       }
-
-//       fun getNote(){
-//           val userId = FirebaseAuth.getInstance().currentUser?.uid.toString()
-//           dataBase = FirebaseFirestore.getInstance()
-//           dataBase.collection("users").document(userId).collection("Notes").
-//                   addSnapshotListener(object : EventListener<QuerySnapshot>{
-//                       override fun onEvent(
-//                           value: QuerySnapshot?,
-//                           error: FirebaseFirestoreException?
-//                       ) {
-//                           if (error != null){
-//                               Log.e("firestore error", error.message.toString())
-//                               return
-//                           }
-//                           for(documentChanges:DocumentChange  in value?.documentChanges!!){
-//                               if(documentChange.type == DocumentChange.Type.ADDED){
-//
-//                                   val userNote:Notes = documentChange.document.toObject(Notes :: class.java)
-//                                   Log.d("get notes",userNote.noteTitle)
-//                                   noteArrayList.add(documentChange.document.toObject(Notes::class.java))
-//                               }
-//                           }
-//
-//                           noteAdapter.notifyDataSetChanged()
-//                       }
-//
-//                   })
-//       }
+    private fun removeNote(){
+        val args = this.arguments
+        noteViewModel.removeNote(noteId)
+        noteViewModel.deleteNotes.observe(viewLifecycleOwner,Observer{
+            if (it.status){
+                Toast.makeText(context,it.msg,Toast.LENGTH_LONG).show()
+            }
+        })
+    }
 
 
     }

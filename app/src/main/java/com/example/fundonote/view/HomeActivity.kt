@@ -13,7 +13,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.fundonote.R
-import com.example.fundonote.SaveNote
+import com.example.fundonote.HomeFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -37,7 +37,7 @@ class HomeActivity : AppCompatActivity() {
         actionBarDrawerToggle.isDrawerIndicatorEnabled = true
         actionBarDrawerToggle.syncState()
 
-        replaceFragment(SaveNote())
+        replaceFragment(HomeFragment())
 
         floatingButton.setOnClickListener {
             val fragmentManager = supportFragmentManager
