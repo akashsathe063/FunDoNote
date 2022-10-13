@@ -25,6 +25,7 @@ class NoteFragment : Fragment() {
     private val binding get() = _binding!!
     lateinit var noteViewModel: NoteViewModel
     lateinit var noteId: String
+    lateinit var notes: Notes
 
     override fun onCreateView(
 
@@ -37,10 +38,9 @@ class NoteFragment : Fragment() {
             this,
             NoteViewModelFactory(NoteService())
         ).get(NoteViewModel::class.java)
-        noteId = arguments?.getString("noteId").toString()
-        readSingleNote()
+      //  readSingleNote()
         saveNote()
-        updateNote()
+      //  updateNote()
         return binding.root
     }
 
@@ -70,42 +70,4 @@ class NoteFragment : Fragment() {
         }
     }
 
-    private fun readSingleNote() {
-
-        //fetch noteId from adapter to notefragment()
-
-
-        Log.d("notefragment", "${noteId}")
-        noteViewModel.readSingleNote(noteId)
-        noteViewModel.readSigleNote.observe(viewLifecycleOwner, Observer {
-            if (it.status) {
-                var title: TextView = binding.noteTitle
-                var description: TextView = binding.noteContent
-//                    binding.noteTitle.setText(it.note.noteTitle)
-//                    binding.noteContent.setText(it.note.noteDescription)
-                title.text = it.note.noteTitle
-                description.text = it.note.noteDescription
-            }
-        })
-
-    }
-
-    private fun updateNote() {
-        binding.btnSaveNote.setOnClickListener {
-            noteViewModel.updateNote(noteId)
-            noteViewModel.updateNotes.observe(viewLifecycleOwner, Observer {
-                if (it.status) {
-                    Toast.makeText(context, it.msg, Toast.LENGTH_SHORT).show()
-                    val transaction =
-                        (context as AppCompatActivity).supportFragmentManager.beginTransaction()
-                    transaction.replace(R.id.fragmaintContainer, HomeFragment())
-                    transaction.addToBackStack(null)
-                    transaction.commit()
-                } else {
-                    Toast.makeText(context, it.msg, Toast.LENGTH_SHORT).show()
-                }
-            })
-        }
-
-    }
 }
