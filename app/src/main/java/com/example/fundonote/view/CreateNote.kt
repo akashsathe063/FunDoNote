@@ -20,7 +20,7 @@ import com.example.fundonote.viewmodel.NoteViewModel
 import com.example.fundonote.viewmodel.NoteViewModelFactory
 
 
-class NoteFragment : Fragment() {
+class CreateNote : Fragment() {
     private var _binding: FragmentNoteBinding? = null
     private val binding get() = _binding!!
     lateinit var noteViewModel: NoteViewModel

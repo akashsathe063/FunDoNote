@@ -90,7 +90,7 @@ class NoteService() {
             }
     }
 
-    fun readSingleNote(noteId: String, listner: (UpdateNoteAuthListner) -> Unit) {
+    fun readSingleNote(noteId: String, listner: (ReadNoteAuthListner) -> Unit) {
         var userId: String = firebaseAuth.currentUser?.uid.toString()
         fireStoreDataBase = FirebaseFirestore.getInstance()
         fireStoreDataBase.collection("users").document(userId).collection("Notes").document(noteId)
@@ -105,7 +105,7 @@ class NoteService() {
 
                     )
                     listner(
-                        UpdateNoteAuthListner(
+                        ReadNoteAuthListner(
                             note = userNote,
                             status = true,
                             msg = "fetch note Successfully"
@@ -120,7 +120,7 @@ class NoteService() {
 
     }
 
-    fun updateNote(noteId: String, listner: (AuthListner) -> Unit) {
+    fun updateNote(noteId: String, notes: Notes, listner: (AuthListner) -> Unit) {
         var userId: String = firebaseAuth.currentUser?.uid.toString()
         var fireStoreNote = HashMap<String, String>()
         fireStoreNote.put("NoteTitle", notes.noteTitle)

@@ -10,13 +10,10 @@ class NoteViewModel(private var noteService: NoteService) : ViewModel() {
     private var _UserNoteStatus = MutableLiveData<AuthListner>()
     private var _GetNotes = MutableLiveData<NoteAuthListener>()
     private var _DeleteNotes = MutableLiveData<AuthListner>()
-    private var _ReadSingleNote = MutableLiveData<UpdateNoteAuthListner>()
-    private var _UpdateNotes = MutableLiveData < AuthListner >()
     val userNoteStatus = _UserNoteStatus as LiveData<AuthListner>
     val getNotes = _GetNotes as LiveData<NoteAuthListener>
     val deleteNotes = _DeleteNotes as LiveData<AuthListner>
-    val updateNotes = _UpdateNotes as LiveData<AuthListner>
-    val readSigleNote = _ReadSingleNote as LiveData<UpdateNoteAuthListner>
+
     fun userNote(note: Notes) {
         noteService.saveNote(note) {
             if (it.status) {
@@ -39,18 +36,5 @@ class NoteViewModel(private var noteService: NoteService) : ViewModel() {
         }
     }
 
-    fun readSingleNote(noteId: String) {
-        noteService.readSingleNote(noteId) {
-            if (it.status) {
-                _ReadSingleNote.value = it
-            }
-        }
-    }
-    fun updateNote(noteId: String){
-        noteService.updateNote(noteId){
-            if (it.status){
-                _UpdateNotes.value = it
-            }
-        }
-    }
+
 }

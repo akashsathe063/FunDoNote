@@ -49,7 +49,7 @@ class MyAdapter(var noteList: ArrayList<Notes>, var context: Context) :
             popupMenu.setOnMenuItemClickListener {
                 when (it.itemId) {
                     id.editTv -> {
-                        val fragment = NoteFragment()
+                        val fragment = UpdateNoteFragment()
                         val transaction =
                             (context as AppCompatActivity).supportFragmentManager.beginTransaction()
                         var bundle = Bundle()
@@ -59,7 +59,7 @@ class MyAdapter(var noteList: ArrayList<Notes>, var context: Context) :
                         transaction.addToBackStack(null)
                         transaction.commit()
 
-                            Log.d("MyAdapter", "${note.noteId}")
+                        Log.d("MyAdapter", "${note.noteId}")
 
 
                     }
@@ -67,12 +67,14 @@ class MyAdapter(var noteList: ArrayList<Notes>, var context: Context) :
                     id.Delete -> {
 
                         //   noteViewModel.deleteNotes.observe()
+                        val fragment = HomeFragment()
                         val transaction =
                             (context as AppCompatActivity).supportFragmentManager.beginTransaction()
                         var bundle = Bundle()
                         bundle.putString("noteId", note.noteId)
-                        HomeFragment().arguments = bundle
-                        transaction.replace(R.id.fragmaintContainer, HomeFragment())
+                        Log.d("MyAdapter", "note id in delete ${note.noteId}")
+                        fragment.arguments = bundle
+                        transaction.replace(R.id.fragmaintContainer, fragment)
                         transaction.addToBackStack(null)
                         transaction.commit()
 

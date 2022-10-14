@@ -25,7 +25,6 @@ class HomeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_home)
         val mainDrawer:DrawerLayout = findViewById(R.id.MainDrawer)
         var toolBar:Toolbar = findViewById(R.id.TOOLBAR)
-        var floatingButton: FloatingActionButton = findViewById(R.id.btnfloating)
         setSupportActionBar(toolBar)
         toolBar.showOverflowMenu()
         actionBarDrawerToggle = ActionBarDrawerToggle(
@@ -39,13 +38,6 @@ class HomeActivity : AppCompatActivity() {
 
         replaceFragment(HomeFragment())
 
-        floatingButton.setOnClickListener {
-            val fragmentManager = supportFragmentManager
-            val fragmentTransaction = fragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.fragmaintContainer, NoteFragment())
-            fragmentTransaction.commit()
-            floatingButton.hide()
-        }
 
     }
 
