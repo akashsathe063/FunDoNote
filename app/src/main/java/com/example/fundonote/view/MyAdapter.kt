@@ -19,7 +19,6 @@ import com.example.fundonote.model.Notes
 class MyAdapter(var noteList: ArrayList<Notes>, var context: Context) :
     RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
 
-
     var allNote = mutableListOf<Notes>().apply {
         Log.d("MyAdapter", noteList.size.toString())
         addAll(noteList)
@@ -32,8 +31,11 @@ class MyAdapter(var noteList: ArrayList<Notes>, var context: Context) :
 //    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val inflater = LayoutInflater.from(parent.context)
+
         val view = inflater.inflate(layout.note_item_view, parent, false)
         return MyViewHolder(view)
+
+
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
@@ -72,7 +74,6 @@ class MyAdapter(var noteList: ArrayList<Notes>, var context: Context) :
                             (context as AppCompatActivity).supportFragmentManager.beginTransaction()
                         var bundle = Bundle()
                         bundle.putString("noteId", note.noteId)
-                        Log.d("MyAdapter", "note id in delete ${note.noteId}")
                         fragment.arguments = bundle
                         transaction.replace(R.id.fragmaintContainer, fragment)
                         transaction.addToBackStack(null)

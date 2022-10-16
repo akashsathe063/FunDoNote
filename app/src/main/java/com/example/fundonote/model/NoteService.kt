@@ -125,6 +125,7 @@ class NoteService() {
         var fireStoreNote = HashMap<String, String>()
         fireStoreNote.put("NoteTitle", notes.noteTitle)
         fireStoreNote.put("NoteDescription", notes.noteDescription)
+        fireStoreNote.put("NoteId", notes.noteId)
         var documentReference: DocumentReference =
             fireStoreDataBase.collection("users").document(userId).collection("Notes")
                 .document(noteId)

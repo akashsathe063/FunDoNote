@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.fundonote.model.*
+import java.sql.RowId
 
 class NoteViewModel(private var noteService: NoteService) : ViewModel() {
 
