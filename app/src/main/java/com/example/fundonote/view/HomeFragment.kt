@@ -8,16 +8,20 @@ import android.widget.GridView
 import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.core.view.MenuItemCompat
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.fundonote.databinding.FragmentSaveNoteBinding
 import com.example.fundonote.view.MyAdapter
 import com.example.fundonote.model.NoteService
 import com.example.fundonote.model.Notes
 import com.example.fundonote.view.CreateNote
+import com.example.fundonote.view.ProfileFragmet
 import com.example.fundonote.viewmodel.NoteViewModel
 import com.example.fundonote.viewmodel.NoteViewModelFactory
 import com.google.firebase.auth.FirebaseAuth
@@ -38,6 +42,9 @@ class HomeFragment : Fragment() {
     private lateinit var dataBase: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
     private lateinit var noteId: String
+
+    // private var bundle = Bundle()
+    var gridFlag: Int = 0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -47,6 +54,7 @@ class HomeFragment : Fragment() {
             this,
             NoteViewModelFactory(NoteService())
         ).get(NoteViewModel::class.java)
+        setHasOptionsMenu(true)
         recyclerView = binding.recyclerView
 
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -100,13 +108,21 @@ class HomeFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.search_view, menu)
-//        var menuItem : MenuItem = menu!!.findItem(R.id.gridLayout)
-//        var view : View = MenuItemCompat.getActionView(menuItem)
-//          view.setOnClickListener(View.OnClickListener {
-//              binding.recyclerView.layoutManager =
-//                  GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
-//              Toast.makeText(context, "toggal button clicked ", Toast.LENGTH_LONG).show()
-//          })
+        var menuItem: MenuItem = menu!!.findItem(R.id.account_Profile)
+        var view: View = MenuItemCompat.getActionView(menuItem)
+        var profileImage: CircleImageView = view.findViewById(R.id.toolBar_profile_image)
+
+        Glide
+            .with(this)
+            .load("https://images.pexels.com/photos/771742/pexels-photo-771742.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1")
+            .into(profileImage)
+
+        profileImage.setOnClickListener(View.OnClickListener {
+            Toast.makeText(context, "profile click", Toast.LENGTH_LONG).show()
+            var dialog = ProfileFragmet()
+            dialog.show(childFragmentManager, "customDialog")
+        })
+        return super.onCreateOptionsMenu(menu, inflater)
 
     }
 
@@ -117,8 +133,16 @@ class HomeFragment : Fragment() {
             }
 
             R.id.gridLayout -> {
-                binding.recyclerView.layoutManager =
-                    GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
+                if (gridFlag == 0 ) {
+                    switchIcon(item)
+                    binding.recyclerView.layoutManager =
+                        GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
+                    gridFlag = 1
+                } else {
+                    switchIcon(item)
+                   binding.recyclerView.layoutManager = LinearLayoutManager(context)
+                    gridFlag = 0
+                }
 
             }
 
@@ -128,6 +152,16 @@ class HomeFragment : Fragment() {
 
         }
         return super.onOptionsItemSelected(item)
+    }
+    fun switchIcon(item: MenuItem){
+        if(gridFlag == 0){
+            item.setIcon(resources.getDrawable(R.drawable.ic_baseline_grid_on_24))
+            gridFlag = 1
+        }
+        else{
+            item.setIcon(resources.getDrawable(R.drawable.ic_baseline_horizontal_split_24))
+            gridFlag = 0
+        }
     }
 }
 

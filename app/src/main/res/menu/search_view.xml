@@ -10,7 +10,7 @@
 
     <item
         android:id="@+id/gridLayout"
-        android:icon="@drawable/ic_baseline_grid_on_24"
+        android:icon="@drawable/toggle_button_to_change_layout"
         android:title="Grid"
         app:showAsAction="always" />
 
