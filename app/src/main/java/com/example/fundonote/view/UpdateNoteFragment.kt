@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.fundonote.HomeFragment
 import com.example.fundonote.R
+import com.example.fundonote.database.DBHelper
 import com.example.fundonote.databinding.FragmentNoteBinding
 import com.example.fundonote.databinding.FragmentUpdateNoteBinding
 import com.example.fundonote.model.NoteService
@@ -36,7 +37,7 @@ class UpdateNoteFragment : Fragment() {
         _binding = FragmentUpdateNoteBinding.inflate(inflater, container, false)
 
         updateNoteViewModel =
-            ViewModelProvider(this, UpdateNoteViewModelFactory(NoteService())).get(
+            ViewModelProvider(this, UpdateNoteViewModelFactory(NoteService( DBHelper(requireContext())))).get(
                 UpdateNoteViewModel::class.java
             )
         noteId = arguments?.getString("noteId").toString()

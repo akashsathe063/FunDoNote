@@ -1,44 +1,46 @@
 package com.example.fundonote.model
 
 import android.util.Log
+import com.example.fundonote.database.DBHelper
 import com.example.fundonote.view.MyAdapter
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.google.firebase.storage.FirebaseStorage
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-class NoteService() {
-    private lateinit var firebaseAuth: FirebaseAuth
-    private lateinit var fireStoreDataBase: FirebaseFirestore
+class NoteService(private val dbHelper: DBHelper) {
+    private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    private var fireStoreDataBase: FirebaseFirestore = FirebaseFirestore.getInstance()
     private lateinit var firebaseStorage: FirebaseStorage
     private lateinit var notes: Notes
-    private lateinit var myAdapter: MyAdapter
 
 
     init {
-        firebaseAuth = FirebaseAuth.getInstance()
-        fireStoreDataBase = FirebaseFirestore.getInstance()
+        //    firebaseAuth = FirebaseAuth.getInstance()
+        //    fireStoreDataBase = FirebaseFirestore.getInstance()
     }
 
     fun saveNote(note: Notes, listner: (AuthListner) -> Unit) {
-        val userId = firebaseAuth.currentUser?.uid.toString()
-        note.noteId = UUID.randomUUID().toString()
+//        val userId = firebaseAuth.currentUser?.uid.toString()
         var fireStoreNote = HashMap<String, String>()
 
         fireStoreNote.put("NoteTitle", note.noteTitle)
         fireStoreNote.put("NoteDescription", note.noteDescription)
-        fireStoreNote.put("NoteId", note.noteId)
-        var documentReference: DocumentReference =
-            fireStoreDataBase.collection("users").document(userId).collection("Notes")
-                .document(note.noteId)
+        firebaseAuth.currentUser?.let {
+            var documentReference: DocumentReference =
+                fireStoreDataBase.collection("users").document(it.uid).collection("Notes")
+                    .document()
+            note.userId = it.uid
+            note.noteId = documentReference.id
+            documentReference.set(fireStoreNote).addOnSuccessListener(OnSuccessListener() {
+                dbHelper.addNotes(note)
+                listner(AuthListner(status = true, msg = "note save Succesfully"))
 
-        documentReference.set(fireStoreNote).addOnSuccessListener(OnSuccessListener() {
-            listner(AuthListner(status = true, msg = "note save Succesfully"))
+            })
+        }
 
-        })
     }
 
     fun getNoteData(listner: (NoteAuthListener) -> Unit) {
@@ -49,13 +51,11 @@ class NoteService() {
                 val noteList = ArrayList<Notes>()
                 if (it != null && it.isSuccessful) {
                     for (document in it.result) {
-                        val noteTitle: String = document["NoteTitle"].toString()
-                        val noteContent: String = document["NoteDescription"].toString()
-                        val noteId: String = document["NoteId"].toString()
                         val userNote: Notes = Notes(
-                            noteId = noteId,
-                            noteTitle = noteTitle,
-                            noteDescription = noteContent
+                            document["noteId"].toString(),
+                            document["noteTitle"].toString(),
+                            document["noteDescription"].toString(),
+                            document["userId"].toString()
                         )
                         noteList.add(userNote)
                     }
@@ -136,6 +136,8 @@ class NoteService() {
         })
 
     }
+
+
 }
 
 

@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.fundonote.database.DBHelper
 import com.example.fundonote.databinding.FragmentSaveNoteBinding
 import com.example.fundonote.view.MyAdapter
 import com.example.fundonote.model.NoteService
@@ -52,7 +53,7 @@ class HomeFragment : Fragment() {
         _binding = FragmentSaveNoteBinding.inflate(inflater, container, false)
         noteViewModel = ViewModelProvider(
             this,
-            NoteViewModelFactory(NoteService())
+            NoteViewModelFactory(NoteService(dbHelper = DBHelper(requireContext())))
         ).get(NoteViewModel::class.java)
         setHasOptionsMenu(true)
         recyclerView = binding.recyclerView

@@ -36,6 +36,7 @@ class UserAuthService() {
                     fireStoreUser.put("password", user.password)
                     fireStoreUser.put("Name", user.userName)
                     fireStoreUser.put("image",user.image)
+                    fireStoreUser.put("userId",user.userId)
                     documentReference.set(fireStoreUser).addOnSuccessListener(OnSuccessListener() {
                         //    Log.d(it.toString(),"user profile is created for"+user.userId)
                         listner(AuthListner(status = true, msg = "User register Succesfully"))

@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.fundonote.R
 import com.example.fundonote.HomeFragment
+import com.example.fundonote.database.DBHelper
 import com.example.fundonote.databinding.FragmentNoteBinding
 import com.example.fundonote.model.NoteService
 import com.example.fundonote.model.Notes
@@ -36,11 +37,11 @@ class CreateNote : Fragment() {
 
         noteViewModel = ViewModelProvider(
             this,
-            NoteViewModelFactory(NoteService())
+            NoteViewModelFactory(NoteService(DBHelper(requireContext())))
         ).get(NoteViewModel::class.java)
-      //  readSingleNote()
+        //  readSingleNote()
         saveNote()
-      //  updateNote()
+        //  updateNote()
         return binding.root
     }
 
@@ -48,7 +49,7 @@ class CreateNote : Fragment() {
         binding.btnSaveNote.setOnClickListener {
             val noteTitle = binding.noteTitle.text.toString()
             val noteDescription = binding.noteContent.text.toString()
-            var note = Notes(noteId = "", noteTitle = noteTitle, noteDescription = noteDescription)
+            var note = Notes(noteTitle = noteTitle, noteDescription = noteDescription)
             if (noteTitle.isNotEmpty() && noteDescription.isNotEmpty()) {
                 noteViewModel.userNote(note)
                 noteViewModel.userNoteStatus.observe(viewLifecycleOwner, Observer {
