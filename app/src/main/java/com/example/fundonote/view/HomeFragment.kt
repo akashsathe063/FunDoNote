@@ -53,7 +53,7 @@ class HomeFragment : Fragment() {
         _binding = FragmentSaveNoteBinding.inflate(inflater, container, false)
         noteViewModel = ViewModelProvider(
             this,
-            NoteViewModelFactory(NoteService(dbHelper = DBHelper(requireContext())))
+            NoteViewModelFactory(NoteService(DBHelper(requireContext())))
         ).get(NoteViewModel::class.java)
         setHasOptionsMenu(true)
         recyclerView = binding.recyclerView
@@ -76,8 +76,11 @@ class HomeFragment : Fragment() {
                 ?.commit()
         }
 
-        noteId = arguments?.getString("noteId").toString()
 
+        var bundle = arguments?.getString("NoteId").toString()
+        if (bundle != null) {
+            noteId = bundle
+        }
         removeNote()
         readNote()
         //   getNote()
@@ -134,14 +137,14 @@ class HomeFragment : Fragment() {
             }
 
             R.id.gridLayout -> {
-                if (gridFlag == 0 ) {
+                if (gridFlag == 0) {
                     switchIcon(item)
                     binding.recyclerView.layoutManager =
                         GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
                     gridFlag = 1
                 } else {
                     switchIcon(item)
-                   binding.recyclerView.layoutManager = LinearLayoutManager(context)
+                    binding.recyclerView.layoutManager = LinearLayoutManager(context)
                     gridFlag = 0
                 }
 
@@ -154,12 +157,12 @@ class HomeFragment : Fragment() {
         }
         return super.onOptionsItemSelected(item)
     }
-    fun switchIcon(item: MenuItem){
-        if(gridFlag == 0){
+
+    fun switchIcon(item: MenuItem) {
+        if (gridFlag == 0) {
             item.setIcon(resources.getDrawable(R.drawable.ic_baseline_grid_on_24))
             gridFlag = 1
-        }
-        else{
+        } else {
             item.setIcon(resources.getDrawable(R.drawable.ic_baseline_horizontal_split_24))
             gridFlag = 0
         }

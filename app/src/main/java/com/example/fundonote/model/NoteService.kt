@@ -15,6 +15,7 @@ class NoteService(private val dbHelper: DBHelper) {
     private var fireStoreDataBase: FirebaseFirestore = FirebaseFirestore.getInstance()
     private lateinit var firebaseStorage: FirebaseStorage
     private lateinit var notes: Notes
+    private lateinit var documentReference: DocumentReference
 
 
     init {
@@ -23,18 +24,23 @@ class NoteService(private val dbHelper: DBHelper) {
     }
 
     fun saveNote(note: Notes, listner: (AuthListner) -> Unit) {
-//        val userId = firebaseAuth.currentUser?.uid.toString()
+        //   val userId = firebaseAuth.currentUser?.uid.toString()
         var fireStoreNote = HashMap<String, String>()
 
         fireStoreNote.put("NoteTitle", note.noteTitle)
         fireStoreNote.put("NoteDescription", note.noteDescription)
+
         firebaseAuth.currentUser?.let {
             var documentReference: DocumentReference =
                 fireStoreDataBase.collection("users").document(it.uid).collection("Notes")
                     .document()
             note.userId = it.uid
             note.noteId = documentReference.id
+            fireStoreNote.put("NoteId", note.noteId)
+            fireStoreNote.put("UserId", note.userId)
             documentReference.set(fireStoreNote).addOnSuccessListener(OnSuccessListener() {
+                fireStoreDataBase.collection("users").document(note.noteId).collection("Notes")
+                    .document(note.noteId).set(fireStoreNote)
                 dbHelper.addNotes(note)
                 listner(AuthListner(status = true, msg = "note save Succesfully"))
 
@@ -52,12 +58,14 @@ class NoteService(private val dbHelper: DBHelper) {
                 if (it != null && it.isSuccessful) {
                     for (document in it.result) {
                         val userNote: Notes = Notes(
-                            document["noteId"].toString(),
-                            document["noteTitle"].toString(),
-                            document["noteDescription"].toString(),
-                            document["userId"].toString()
+                            document["NoteId"].toString(),
+                            document["UserId"].toString(),
+                            document["NoteTitle"].toString(),
+                            document["NoteDescription"].toString()
+
                         )
                         noteList.add(userNote)
+//                        dbHelper.getAllNotes()
                     }
 
                     Log.d("NoteService", noteList.size.toString())
@@ -100,8 +108,10 @@ class NoteService(private val dbHelper: DBHelper) {
                 if (it.isSuccessful) {
                     val userNote: Notes = Notes(
                         it.result.getString("NoteId").toString(),
+                        it.result.getString("UserId").toString(),
                         it.result.getString("NoteTitle").toString(),
                         it.result.getString("NoteDescription").toString()
+
 
                     )
                     listner(

@@ -14,12 +14,11 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_V
         private val NOTE_ID = "NoteId"
         private val NOTE_TiTle = "NoteTitle"
         private val NOTE_DESCRIPTION = "NoteDescription"
-        private val USER_ID = "userId"
     }
 
     override fun onCreate(p0: SQLiteDatabase?) {
         val CREATE_TABLE =
-            "CREATE TABLE $TABLE_NAME($NOTE_ID TEXT PRIMARY KEY ,$NOTE_TiTle TEXT,$NOTE_DESCRIPTION TEXT)"
+            "CREATE TABLE $TABLE_NAME($NOTE_ID TEXT PRIMARY KEY  ,$NOTE_TiTle TEXT,$NOTE_DESCRIPTION TEXT)"
         p0?.execSQL(CREATE_TABLE)
     }
 
@@ -40,13 +39,13 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_V
                 do {
                     val notes = Notes()
                     notes.noteId = cursor.getColumnIndex(NOTE_ID).toString()
-                    notes.noteId = cursor.getColumnIndex(NOTE_TiTle).toString()
+                    notes.noteTitle = cursor.getColumnIndex(NOTE_TiTle).toString()
                     notes.noteDescription = cursor.getColumnIndex(NOTE_DESCRIPTION).toString()
                     noteArrayList.add(notes)
                 } while (cursor.moveToNext())
             }
         }
-      //  cursor.close()
+        //  cursor.close()
         return noteArrayList
     }
 
@@ -58,7 +57,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_V
         values.put(NOTE_TiTle, notes.noteTitle)
         values.put(NOTE_DESCRIPTION, notes.noteDescription)
         val _Success: Long = sqliteDataBase.insert(TABLE_NAME, null, values)
-      //  sqliteDataBase.close()
+        //  sqliteDataBase.close()
         return (_Success.toInt() != -1)
 
     }

@@ -35,8 +35,8 @@ class UserAuthService() {
                     fireStoreUser.put("email", user.email)
                     fireStoreUser.put("password", user.password)
                     fireStoreUser.put("Name", user.userName)
-                    fireStoreUser.put("image",user.image)
-                    fireStoreUser.put("userId",user.userId)
+                    fireStoreUser.put("image", user.image)
+                    fireStoreUser.put("userId", user.userId)
                     documentReference.set(fireStoreUser).addOnSuccessListener(OnSuccessListener() {
                         //    Log.d(it.toString(),"user profile is created for"+user.userId)
                         listner(AuthListner(status = true, msg = "User register Succesfully"))
@@ -101,7 +101,7 @@ class UserAuthService() {
         }
     }
 
-    fun uploadingProfile(user: User,imageUri: Uri, listner: (AuthListner) -> Unit) {
+    fun uploadingProfile(user: User, imageUri: Uri, listner: (AuthListner) -> Unit) {
 //        var imageuri: Uri? = null
         user.userId = firebaseAuth.currentUser?.uid.toString()
         if (imageUri != null) {
@@ -113,16 +113,9 @@ class UserAuthService() {
                     if (it.isSuccessful) {
                         it.addOnSuccessListener {
                             user.image = it.toString()
-                            fireStoreDataBase.collection("users").document(user.userId).update("image",it.toString())
-//                            var documentReference: DocumentReference =
-//                                fireStoreDataBase.collection("users").document(user.userId)
-//                            var fireStoreUser = HashMap<String, String>()
-//                            fireStoreUser.put("Name",user.userName)
-//                            fireStoreUser.put("email",user.email)
-//                            fireStoreUser.put("image", user.image)
-//                            fireStoreUser.put("password",user.password)
-//                            fireStoreUser.put("noteId",user.userId)
-//                            documentReference.set(fireStoreUser)
+                            fireStoreDataBase.collection("users").document(user.userId)
+                                .update("image", it.toString())
+
                                 .addOnSuccessListener(OnSuccessListener() {
                                     //    Log.d(it.toString(),"user profile is created for"+user.userId)
                                     listner(
@@ -160,13 +153,13 @@ class UserAuthService() {
 //        })
 //    }
 
-    fun displayImage(user: User, listner: (ProfileAuthListner) -> Unit){
-      lateinit var displayImage : User
+    fun displayImage(user: User, listner: (ProfileAuthListner) -> Unit) {
+        lateinit var displayImage: User
         user.userId = firebaseAuth.currentUser?.uid.toString()
         var documentReference: DocumentReference =
             fireStoreDataBase.collection("users").document(user.userId)
         documentReference.get().addOnCompleteListener {
-            if (it.isSuccessful){
+            if (it.isSuccessful) {
                 displayImage = User(
                     it.result.getString("userId").toString(),
                     it.result.getString("Name").toString(),

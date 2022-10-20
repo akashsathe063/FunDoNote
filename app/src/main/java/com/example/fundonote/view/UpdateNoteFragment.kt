@@ -40,7 +40,10 @@ class UpdateNoteFragment : Fragment() {
             ViewModelProvider(this, UpdateNoteViewModelFactory(NoteService( DBHelper(requireContext())))).get(
                 UpdateNoteViewModel::class.java
             )
-        noteId = arguments?.getString("noteId").toString()
+        var  bundle = arguments?.getString("NoteId").toString()
+        if(bundle != null) {
+            noteId = bundle
+        }
         readSingleNote()
         updateNote()
         return binding.root

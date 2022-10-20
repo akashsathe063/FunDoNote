@@ -55,7 +55,7 @@ class MyAdapter(var noteList: ArrayList<Notes>, var context: Context) :
                         val transaction =
                             (context as AppCompatActivity).supportFragmentManager.beginTransaction()
                         var bundle = Bundle()
-                        bundle.putString("noteId", note.noteId)
+                        bundle.putString("NoteId", note.noteId)
                         fragment.arguments = bundle
                         transaction.replace(R.id.fragmaintContainer, fragment)
                         transaction.addToBackStack(null)
@@ -73,7 +73,7 @@ class MyAdapter(var noteList: ArrayList<Notes>, var context: Context) :
                         val transaction =
                             (context as AppCompatActivity).supportFragmentManager.beginTransaction()
                         var bundle = Bundle()
-                        bundle.putString("noteId", note.noteId)
+                        bundle.putString("NoteId", note.noteId)
                         fragment.arguments = bundle
                         transaction.replace(R.id.fragmaintContainer, fragment)
                         transaction.addToBackStack(null)
