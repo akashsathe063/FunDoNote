@@ -14,6 +14,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_V
         private val NOTE_ID = "NoteId"
         private val NOTE_TiTle = "NoteTitle"
         private val NOTE_DESCRIPTION = "NoteDescription"
+      //  private val USER_ID = "UserId"
     }
 
     override fun onCreate(p0: SQLiteDatabase?) {
@@ -38,6 +39,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_V
             if (cursor.moveToFirst()) {
                 do {
                     val notes = Notes()
+                  //  notes.userId = cursor.getColumnIndex(USER_ID).toString()
                     notes.noteId = cursor.getColumnIndex(NOTE_ID).toString()
                     notes.noteTitle = cursor.getColumnIndex(NOTE_TiTle).toString()
                     notes.noteDescription = cursor.getColumnIndex(NOTE_DESCRIPTION).toString()
@@ -53,6 +55,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_V
     fun addNotes(notes: Notes): Boolean {
         val sqliteDataBase = this.writableDatabase
         val values = ContentValues()
+      //  values.put(USER_ID, notes.userId)
         values.put(NOTE_ID, notes.noteId)
         values.put(NOTE_TiTle, notes.noteTitle)
         values.put(NOTE_DESCRIPTION, notes.noteDescription)
@@ -62,4 +65,34 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_V
 
     }
 
+    // select data for perticular id
+    fun readSingleNote(noteId: String): Notes {
+        val note = Notes()
+        val sqliteDataBase = writableDatabase
+        val selectQuery = "SELECT * FROM $TABLE_NAME WHERE $NOTE_ID = '$noteId'"
+        val cursor = sqliteDataBase.rawQuery(selectQuery, null,null)
+
+        cursor?.moveToFirst()
+     //   note.userId = cursor.getColumnIndex(USER_ID).toString()
+        note.noteId = cursor.getColumnIndex(NOTE_ID).toString()
+        note.noteTitle = cursor.getColumnIndex(NOTE_TiTle).toString()
+        note.noteDescription = cursor.getColumnIndex(NOTE_DESCRIPTION).toString()
+        return note
+    }
+
+    // delete operation
+    fun deleteNote(noteId: String):Boolean{
+        val sqliteDataBase = this.writableDatabase
+        val _Success = sqliteDataBase.delete(TABLE_NAME, NOTE_ID + "=?", arrayOf(noteId.toString())).toLong()
+        return (_Success.toInt() != -1)
+    }
+    // update operation
+    fun updateNote(notes: Notes):Boolean{
+        val sqliteDataBase = this.writableDatabase
+        val values = ContentValues()
+        values.put(NOTE_TiTle, notes.noteTitle)
+        values.put(NOTE_DESCRIPTION, notes.noteDescription)
+        val _Success: Long = sqliteDataBase.update(TABLE_NAME,  values, NOTE_ID + "=?", arrayOf(notes.noteId.toString())).toLong()
+        return (_Success.toInt() != -1)
+    }
 }

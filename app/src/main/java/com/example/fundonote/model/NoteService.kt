@@ -2,7 +2,6 @@ package com.example.fundonote.model
 
 import android.util.Log
 import com.example.fundonote.database.DBHelper
-import com.example.fundonote.view.MyAdapter
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
@@ -16,6 +15,7 @@ class NoteService(private val dbHelper: DBHelper) {
     private lateinit var firebaseStorage: FirebaseStorage
     private lateinit var notes: Notes
     private lateinit var documentReference: DocumentReference
+
 
 
     init {
@@ -39,7 +39,8 @@ class NoteService(private val dbHelper: DBHelper) {
             fireStoreNote.put("NoteId", note.noteId)
             fireStoreNote.put("UserId", note.userId)
             documentReference.set(fireStoreNote).addOnSuccessListener(OnSuccessListener() {
-                fireStoreDataBase.collection("users").document(note.noteId).collection("Notes")
+
+                fireStoreDataBase.collection("users").document(note.userId).collection("Notes")
                     .document(note.noteId).set(fireStoreNote)
                 dbHelper.addNotes(note)
                 listner(AuthListner(status = true, msg = "note save Succesfully"))
@@ -58,8 +59,8 @@ class NoteService(private val dbHelper: DBHelper) {
                 if (it != null && it.isSuccessful) {
                     for (document in it.result) {
                         val userNote: Notes = Notes(
-                            document["NoteId"].toString(),
                             document["UserId"].toString(),
+                            document["NoteId"].toString(),
                             document["NoteTitle"].toString(),
                             document["NoteDescription"].toString()
 
@@ -88,6 +89,7 @@ class NoteService(private val dbHelper: DBHelper) {
             .delete()
             .addOnCompleteListener {
                 if (it.isSuccessful) {
+                    dbHelper.deleteNote(noteId)
                     listener(
                         AuthListner(
                             status = true,
@@ -106,14 +108,16 @@ class NoteService(private val dbHelper: DBHelper) {
             .addOnCompleteListener {
 
                 if (it.isSuccessful) {
+
                     val userNote: Notes = Notes(
-                        it.result.getString("NoteId").toString(),
                         it.result.getString("UserId").toString(),
+                        it.result.getString("NoteId").toString(),
                         it.result.getString("NoteTitle").toString(),
                         it.result.getString("NoteDescription").toString()
 
 
                     )
+                    dbHelper.readSingleNote(noteId)
                     listner(
                         ReadNoteAuthListner(
                             note = userNote,
@@ -141,6 +145,7 @@ class NoteService(private val dbHelper: DBHelper) {
                 .document(noteId)
 
         documentReference.set(fireStoreNote).addOnSuccessListener(OnSuccessListener() {
+            dbHelper.updateNote(notes)
             listner(AuthListner(status = true, msg = "note save Succesfully"))
 
         })
