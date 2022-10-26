@@ -19,7 +19,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_V
 
     override fun onCreate(p0: SQLiteDatabase?) {
         val CREATE_TABLE =
-            "CREATE TABLE $TABLE_NAME($NOTE_ID TEXT PRIMARY KEY  ,$NOTE_TiTle TEXT,$NOTE_DESCRIPTION TEXT)"
+            "CREATE TABLE $TABLE_NAME($NOTE_ID TEXT  PRIMARY KEY,$NOTE_TiTle TEXT,$NOTE_DESCRIPTION TEXT)"
         p0?.execSQL(CREATE_TABLE)
     }
 
@@ -56,7 +56,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_V
         val sqliteDataBase = this.writableDatabase
         val values = ContentValues()
       //  values.put(USER_ID, notes.userId)
-        values.put(NOTE_ID, notes.noteId)
+          values.put(NOTE_ID,notes.noteId)
         values.put(NOTE_TiTle, notes.noteTitle)
         values.put(NOTE_DESCRIPTION, notes.noteDescription)
         val _Success: Long = sqliteDataBase.insert(TABLE_NAME, null, values)

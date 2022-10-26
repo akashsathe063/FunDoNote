@@ -7,6 +7,7 @@ import android.widget.GridLayout
 import android.widget.GridView
 import androidx.fragment.app.Fragment
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuItemCompat
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
@@ -30,6 +31,7 @@ import com.google.firebase.firestore.*
 import com.google.firebase.firestore.FieldValue.delete
 import de.hdodenhof.circleimageview.CircleImageView
 import java.nio.file.Files.delete
+import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -38,13 +40,12 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var recyclerView: RecyclerView
     private lateinit var noteArrayList: ArrayList<Notes>
+   // private lateinit var newNoteArrayList: ArrayList<Notes>
     private lateinit var noteViewModel: NoteViewModel
     private lateinit var noteAdapter: MyAdapter
     private lateinit var dataBase: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
     private lateinit var noteId: String
-
-    // private var bundle = Bundle()
     var gridFlag: Int = 0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,6 +64,9 @@ class HomeFragment : Fragment() {
 
         recyclerView.setHasFixedSize(true)
         noteArrayList = arrayListOf<Notes>()
+        //   newNoteArrayList = arrayListOf<Notes>()
+
+        // newNoteArrayList.addAll(noteArrayList)
 
         noteAdapter = MyAdapter(noteArrayList, requireContext())
 
@@ -96,6 +100,7 @@ class HomeFragment : Fragment() {
                 Log.d("SaveNoteFragment", it.noteList.size.toString())
                 Toast.makeText(context, it.msg, Toast.LENGTH_SHORT).show()
                 recyclerView.adapter = MyAdapter(it.noteList, requireContext())
+                noteArrayList = it.noteList
             }
         })
     }
@@ -126,9 +131,26 @@ class HomeFragment : Fragment() {
             var dialog = ProfileFragmet()
             dialog.show(childFragmentManager, "customDialog")
         })
-        return super.onCreateOptionsMenu(menu, inflater)
 
+        // search item
+        val searchItem = menu.findItem(R.id.search)
+        val searchView = searchItem.actionView as SearchView
+        // searchView.queryHint
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filter(newText)
+                return false
+            }
+
+        })
+
+        return super.onCreateOptionsMenu(menu, inflater)
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -150,10 +172,6 @@ class HomeFragment : Fragment() {
 
             }
 
-            R.id.search -> {
-                Toast.makeText(context, "search click", Toast.LENGTH_LONG).show()
-            }
-
         }
         return super.onOptionsItemSelected(item)
     }
@@ -167,7 +185,35 @@ class HomeFragment : Fragment() {
             gridFlag = 0
         }
     }
+
+    fun filter(newText: String?) {
+        var filteredNotes: ArrayList<Notes> = arrayListOf()
+        Log.d("HomeFragment","notearryList = ${noteArrayList.size}")
+
+        for (notes in noteArrayList) {
+
+                if (notes.noteTitle.toLowerCase().contains(newText!!.toLowerCase()) || notes.noteDescription.toLowerCase().contains(newText!!.toLowerCase())) {
+                    // if the item is matched we are
+                    // adding it to our filtered list.
+                    filteredNotes.add(notes)
+                    Log.d("HomeFragment","filteredList = ${filteredNotes.size}")
+                }
+            }
+
+        if (filteredNotes.isEmpty()) {
+            // if no item is added in filtered list we are
+            // displaying a toast message as no data found.
+            Toast.makeText(context, "No Notes Found..", Toast.LENGTH_SHORT).show()
+        } else {
+            // at last we are passing that filtered
+            // list to our adapter class.
+           noteAdapter.filterNotes(filteredNotes)
+
+        }
+    }
 }
+
+
 
 
 

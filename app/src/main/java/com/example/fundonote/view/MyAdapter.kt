@@ -6,18 +6,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.PopupMenu
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.PagerAdapter
 import com.example.fundonote.R
 import com.example.fundonote.R.*
 import com.example.fundonote.HomeFragment
 import com.example.fundonote.model.Notes
 
 class MyAdapter(var noteList: ArrayList<Notes>, var context: Context) :
-    RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
+    RecyclerView.Adapter<MyAdapter.MyViewHolder>(){
 
     var allNote = mutableListOf<Notes>().apply {
         Log.d("MyAdapter", noteList.size.toString())
@@ -25,10 +24,7 @@ class MyAdapter(var noteList: ArrayList<Notes>, var context: Context) :
         notifyDataSetChanged()
     }
 
-    //    fun deleteNote(position: Int){
-//        noteList.removeAt(position)
-//        notifyItemRemoved(position)
-//    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val inflater = LayoutInflater.from(parent.context)
 
@@ -36,6 +32,11 @@ class MyAdapter(var noteList: ArrayList<Notes>, var context: Context) :
         return MyViewHolder(view)
 
 
+    }
+
+    fun filterNotes(filterNotes: ArrayList<Notes>) {
+       this.noteList = filterNotes
+        notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
@@ -114,6 +115,24 @@ class MyAdapter(var noteList: ArrayList<Notes>, var context: Context) :
 
 
     }
+
+//    override fun getFilter(): Filter {
+//        var filter = object : Filter(){
+//            override fun performFiltering(p0: CharSequence?): FilterResults {
+//                var filterResults = FilterResults()
+//                if(p0 == null || p0.isEmpty()){
+//                    filterResults.values
+//
+//                }
+//            }
+//
+//            override fun publishResults(p0: CharSequence?, p1: FilterResults?) {
+//                TODO("Not yet implemented")
+//            }
+//
+//        }
+//        return  filter
+//    }
 
 
 }

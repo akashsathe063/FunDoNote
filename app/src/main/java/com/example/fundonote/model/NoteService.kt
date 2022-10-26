@@ -2,6 +2,7 @@ package com.example.fundonote.model
 
 import android.util.Log
 import com.example.fundonote.database.DBHelper
+import com.example.fundonote.networkutil.NetworkConnectivity
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
@@ -15,7 +16,6 @@ class NoteService(private val dbHelper: DBHelper) {
     private lateinit var firebaseStorage: FirebaseStorage
     private lateinit var notes: Notes
     private lateinit var documentReference: DocumentReference
-
 
 
     init {
@@ -66,7 +66,7 @@ class NoteService(private val dbHelper: DBHelper) {
 
                         )
                         noteList.add(userNote)
-//                        dbHelper.getAllNotes()
+                        // dbHelper.getAllNotes()
                     }
 
                     Log.d("NoteService", noteList.size.toString())

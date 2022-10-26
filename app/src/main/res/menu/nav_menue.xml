@@ -14,8 +14,8 @@
 
     <item
         android:id="@+id/nav_sync"
-        android:icon="@drawable/ic_baseline_sync_24"
-        android:title="sync"/>
+        android:icon="@drawable/ic_baseline_archive_24"
+        android:title="Archive"/>
 
     <item
         android:id="@+id/nav_trash"
