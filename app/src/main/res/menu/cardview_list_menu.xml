@@ -11,5 +11,11 @@
         android:title="Delete"
         android:icon="@drawable/ic_baseline_delete_24"
         />
+    <item
+        android:id="@+id/Archive"
+        android:title="Archive"
+        android:icon="@drawable/ic_baseline_archive_24"
+
+        />
 
 </menu>

@@ -23,7 +23,7 @@ class MyAdapter(var noteList: ArrayList<Notes>, var context: Context) :
         addAll(noteList)
         notifyDataSetChanged()
     }
-
+  //  lateinit var filteredNoteArrayList:ArrayList<Notes>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -34,10 +34,10 @@ class MyAdapter(var noteList: ArrayList<Notes>, var context: Context) :
 
     }
 
-    fun filterNotes(filterNotes: ArrayList<Notes>) {
-       this.noteList = filterNotes
-        notifyDataSetChanged()
-    }
+//    fun filterNotes(filterNotes: ArrayList<Notes>) {
+//       this.noteList = filterNotes
+//        notifyDataSetChanged()
+//    }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         var note: Notes = allNote[position]
@@ -109,7 +109,7 @@ class MyAdapter(var noteList: ArrayList<Notes>, var context: Context) :
             noteTitle = itemView.findViewById(id.tvNoteTitle)
             noteDescription = itemView.findViewById(id.NoteDescription)
             mMenues = itemView.findViewById(id.mMenus)
-
+       //     filteredNoteArrayList = noteList
 
         }
 
@@ -121,8 +121,16 @@ class MyAdapter(var noteList: ArrayList<Notes>, var context: Context) :
 //            override fun performFiltering(p0: CharSequence?): FilterResults {
 //                var filterResults = FilterResults()
 //                if(p0 == null || p0.isEmpty()){
-//                    filterResults.values
+//                    filterResults.values = filteredNoteArrayList
+//                    filterResults.count = filteredNoteArrayList.size
 //
+//                }
+//                else{
+//                    var searchChar = p0.toString().toLowerCase()
+//                    var filterResults = ArrayList<Notes>()
+//                    for (notes in filteredNoteArrayList){
+//                        if(notes.noteTitle)
+//                    }
 //                }
 //            }
 //
@@ -134,5 +142,9 @@ class MyAdapter(var noteList: ArrayList<Notes>, var context: Context) :
 //        return  filter
 //    }
 
-
+fun filtering(newFilteredList: ArrayList<Notes>) {
+noteList = newFilteredList
+    Log.d("MyAdapter","NoteList = $noteList")
+    notifyDataSetChanged()
+}
 }
