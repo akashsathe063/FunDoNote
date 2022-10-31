@@ -18,13 +18,15 @@ import com.example.fundonote.databinding.FragmentSaveNoteBinding
 import com.example.fundonote.view.MyAdapter
 import com.example.fundonote.model.NoteService
 import com.example.fundonote.model.Notes
+import com.example.fundonote.view.ArchiveNoteFragment
 import com.example.fundonote.view.CreateNote
 import com.example.fundonote.view.ProfileFragmet
 import com.example.fundonote.viewmodel.NoteViewModel
 import com.example.fundonote.viewmodel.NoteViewModelFactory
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.*
+import com.example.fundonote.viewmodel.UpdateNoteViewModel
+import com.example.fundonote.viewmodel.UpdateNoteViewModelFactory
 import de.hdodenhof.circleimageview.CircleImageView
+import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -33,11 +35,15 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var recyclerView: RecyclerView
     private lateinit var noteArrayList: ArrayList<Notes>
-
-    // private lateinit var newNoteArrayList: ArrayList<Notes>
+    private lateinit var newNoteArrayList: ArrayList<Notes>
+    private lateinit var archiveNoteList: ArrayList<Notes>
+    private lateinit var tempNoteArrayList: ArrayList<Notes>
     private lateinit var noteViewModel: NoteViewModel
-    private lateinit var noteAdapter: MyAdapter
+    private lateinit var updateNoteViewModel: UpdateNoteViewModel
     private lateinit var noteId: String
+    private lateinit var isArchive: String
+    private lateinit var archiveNote: ArchiveNoteFragment
+    private lateinit var note: Notes
     var gridFlag: Int = 0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,22 +54,25 @@ class HomeFragment : Fragment() {
             this,
             NoteViewModelFactory(NoteService(DBHelper(requireContext())))
         ).get(NoteViewModel::class.java)
+
+
+        updateNoteViewModel =
+            ViewModelProvider(
+                this,
+                UpdateNoteViewModelFactory(NoteService(DBHelper(requireContext())))
+            ).get(
+                UpdateNoteViewModel::class.java
+            )
         setHasOptionsMenu(true)
         recyclerView = binding.recyclerView
 
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-
         recyclerView.setHasFixedSize(true)
-          noteArrayList = arrayListOf<Notes>()
-        //   newNoteArrayList = arrayListOf<Notes>()
-
-        // newNoteArrayList.addAll(noteArrayList)
-
-        noteAdapter = MyAdapter(noteArrayList, requireContext())
-
-        recyclerView.adapter = noteAdapter
-
+        noteArrayList = arrayListOf<Notes>()
+        newNoteArrayList = arrayListOf<Notes>()
+        archiveNoteList = arrayListOf<Notes>()
+        tempNoteArrayList = arrayListOf<Notes>()
 
         binding.btnfloating.setOnClickListener {
             val fragment = CreateNote()
@@ -76,22 +85,41 @@ class HomeFragment : Fragment() {
         var bundle = arguments?.getString("NoteId").toString()
         if (bundle != null) {
             noteId = bundle
+            removeNote()
         }
-        removeNote()
-        readNote()
+
+
+        var _Bundle = arguments?.getString("Noteid").toString()
+        if (_Bundle != null) {
+            noteId = _Bundle
+            isArchiveNote()
+        }
+      //  readNote()
         //   getNote()
+        //  isArchiveNote()
 
         return binding.root
     }
 
     fun readNote() {
+        noteArrayList.clear()
         noteViewModel.getNote()
         noteViewModel.getNotes.observe(viewLifecycleOwner, Observer {
             if (it.status) {
                 Log.d("SaveNoteFragment", it.noteList.size.toString())
                 Toast.makeText(context, it.msg, Toast.LENGTH_SHORT).show()
-                recyclerView.adapter = MyAdapter(it.noteList, requireContext())
-                noteArrayList = it.noteList
+                newNoteArrayList = it.noteList
+                //   newNoteArrayList.addAll(tempNoteArrayList)
+                //    archiveNoteList.addAll(noteArrayList)
+                newNoteArrayList.forEach {
+                    if (it.isArchive == true) {
+                        archiveNoteList.add(it)
+                        //           archiveNote.readArchiveNote(archiveNoteList)
+                    } else {
+                        noteArrayList.add(it)
+                    }
+                }
+                recyclerView.adapter = MyAdapter(noteArrayList, requireContext())
             }
         })
     }
@@ -133,30 +161,30 @@ class HomeFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                //    filter(newText)
-                filtering(newText)
-                return true
+                newNoteArrayList.clear()
+                val searchText = newText!!.toLowerCase(Locale.getDefault())
+                if (searchText.isNotEmpty()) {
+                    noteArrayList.forEach {
+                        if (it.noteTitle.toLowerCase(Locale.getDefault())
+                                .contains(searchText) || it.noteDescription.toLowerCase(Locale.getDefault())
+                                .contains(searchText)
+                        ) {
+                            newNoteArrayList.add(it)
+                        }
+                    }
+                    recyclerView.adapter = MyAdapter(newNoteArrayList, requireContext())
+                } else {
+                    newNoteArrayList.clear()
+                    newNoteArrayList.addAll(noteArrayList)
+                    recyclerView.adapter = MyAdapter(noteArrayList, requireContext())
+
+                }
+                return false
             }
 
         })
 
         return super.onCreateOptionsMenu(menu, inflater)
-    }
-
-     fun filtering(newText: String?) {
-        Log.d("@@@", "$noteArrayList")
-        val newFilteredList = arrayListOf<Notes>()
-        for (note in noteArrayList) {
-            if (note.noteTitle.toLowerCase()
-                    .contains(newText!!.toLowerCase()) || note.noteDescription.toLowerCase()
-                    .contains(newText!!.toLowerCase())
-            ) {
-                newFilteredList.add(note)
-                Log.d("newNoteFilteredList", "$newFilteredList")
-            }
-        }
-        noteAdapter.filtering(newFilteredList)
-        noteAdapter.notifyDataSetChanged()
     }
 
 
@@ -194,35 +222,31 @@ class HomeFragment : Fragment() {
         }
     }
 
-//    fun filter(newText: String?) {
-//        var filteredNotes: ArrayList<Notes> = arrayListOf()
-//        Log.d("HomeFragment", "notearryList = ${noteArrayList.size}")
-//
-//        for (notes in noteArrayList) {
-//
-//            if (notes.noteTitle.toLowerCase()
-//                    .contains(newText!!.toLowerCase()) || notes.noteDescription.toLowerCase()
-//                    .contains(newText!!.toLowerCase())
-//            ) {
-//                // if the item is matched we are
-//                // adding it to our filtered list.
-//                filteredNotes.add(notes)
-//                Log.d("HomeFragment", "filteredList = ${filteredNotes.size}")
-//            }
-//        }
-//
-//        if (filteredNotes.isEmpty()) {
-//            // if no item is added in filtered list we are
-//            // displaying a toast message as no data found.
-//            Toast.makeText(context, "No Notes Found..", Toast.LENGTH_SHORT).show()
-//        } else {
-//            // at last we are passing that filtered
-//            // list to our adapter class.
-//           noteAdapter.filterNotes(filteredNotes)
-//
-//        }
-//    }
+    fun isArchiveNote() {
+        // val note = Notes(noteId = noteId, noteTitle = " ", noteDescription = " ",isArchive = "1")
+        updateNoteViewModel.readSingleNote(noteId)
+        updateNoteViewModel.readSigleNote.observe(viewLifecycleOwner, Observer {
+            if (it.status) {
+                note = Notes(
+                    noteId = it.note.noteId,
+                    noteTitle = it.note.noteTitle,
+                    noteDescription = it.note.noteDescription,
+                    isArchive = true
+                )
+                updateNoteViewModel.updateNote(noteId, note)
+                updateNoteViewModel.updateNotes.observe(viewLifecycleOwner, Observer {
+                    if (it.status) {
+
+                        readNote()
+
+                    }
+                })
+            }
+        })
+
+    }
 }
+
 
 
 

@@ -14,12 +14,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.fundonote.HomeFragment
 import com.example.fundonote.R
 import com.example.fundonote.database.DBHelper
-import com.example.fundonote.databinding.FragmentNoteBinding
 import com.example.fundonote.databinding.FragmentUpdateNoteBinding
 import com.example.fundonote.model.NoteService
 import com.example.fundonote.model.Notes
-import com.example.fundonote.viewmodel.NoteViewModel
-import com.example.fundonote.viewmodel.NoteViewModelFactory
 import com.example.fundonote.viewmodel.UpdateNoteViewModel
 import com.example.fundonote.viewmodel.UpdateNoteViewModelFactory
 
@@ -43,9 +40,10 @@ class UpdateNoteFragment : Fragment() {
         var  bundle = arguments?.getString("NoteId").toString()
         if(bundle != null) {
             noteId = bundle
+            updateNote()
         }
         readSingleNote()
-        updateNote()
+
         return binding.root
     }
 

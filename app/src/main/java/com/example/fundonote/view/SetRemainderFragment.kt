@@ -1,7 +1,6 @@
-package com.example.fundonote
+package com.example.fundonote.view
 
 import android.app.*
-import android.content.Context
 import android.content.Context.ALARM_SERVICE
 import android.content.Intent
 import android.os.Build
@@ -12,8 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.getSystemService
-import com.example.fundonote.databinding.FragmentSaveNoteBinding
 import com.example.fundonote.databinding.FragmentSetRemainderBinding
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -53,7 +50,7 @@ class SetRemainderFragment : Fragment() {
 
 
         alarmManager =  activity?.getSystemService(ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context,AlarmReciver::class.java)
+        val intent = Intent(context, AlarmReciver::class.java)
 
         pendingIntet = PendingIntent.getBroadcast(context,0,intent,0)
 
@@ -65,7 +62,7 @@ class SetRemainderFragment : Fragment() {
     private fun setAlarm() {
 
        alarmManager =  activity?.getSystemService(ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context,AlarmReciver::class.java)
+        val intent = Intent(context, AlarmReciver::class.java)
 
         pendingIntet = PendingIntent.getBroadcast(context,0,intent,0)
 

@@ -9,21 +9,20 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.PagerAdapter
 import com.example.fundonote.R
 import com.example.fundonote.R.*
 import com.example.fundonote.HomeFragment
 import com.example.fundonote.model.Notes
 
 class MyAdapter(var noteList: ArrayList<Notes>, var context: Context) :
-    RecyclerView.Adapter<MyAdapter.MyViewHolder>(){
+    RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
 
     var allNote = mutableListOf<Notes>().apply {
         Log.d("MyAdapter", noteList.size.toString())
         addAll(noteList)
         notifyDataSetChanged()
     }
-  //  lateinit var filteredNoteArrayList:ArrayList<Notes>
+    //  lateinit var filteredNoteArrayList:ArrayList<Notes>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -82,6 +81,28 @@ class MyAdapter(var noteList: ArrayList<Notes>, var context: Context) :
 
                     }
 
+                    id.Archive -> {
+
+                        val fragment = HomeFragment()
+                        val transaction =
+                            (context as AppCompatActivity).supportFragmentManager.beginTransaction()
+                        var bundle = Bundle()
+                        bundle.putString("Noteid", note.noteId)
+                        fragment.arguments = bundle
+                        transaction.replace(R.id.fragmaintContainer, fragment)
+                        transaction.addToBackStack(null)
+                        transaction.commit()
+
+                    }
+                    id.remainder ->{
+                        val fragment = SetRemainderFragment()
+                        val transaction =
+                            (context as AppCompatActivity).supportFragmentManager.beginTransaction()
+                        transaction.replace(R.id.fragmaintContainer, fragment)
+                        transaction.addToBackStack(null)
+                        transaction.commit()
+                    }
+
                 }
                 true
             }
@@ -109,42 +130,11 @@ class MyAdapter(var noteList: ArrayList<Notes>, var context: Context) :
             noteTitle = itemView.findViewById(id.tvNoteTitle)
             noteDescription = itemView.findViewById(id.NoteDescription)
             mMenues = itemView.findViewById(id.mMenus)
-       //     filteredNoteArrayList = noteList
 
         }
 
 
     }
 
-//    override fun getFilter(): Filter {
-//        var filter = object : Filter(){
-//            override fun performFiltering(p0: CharSequence?): FilterResults {
-//                var filterResults = FilterResults()
-//                if(p0 == null || p0.isEmpty()){
-//                    filterResults.values = filteredNoteArrayList
-//                    filterResults.count = filteredNoteArrayList.size
-//
-//                }
-//                else{
-//                    var searchChar = p0.toString().toLowerCase()
-//                    var filterResults = ArrayList<Notes>()
-//                    for (notes in filteredNoteArrayList){
-//                        if(notes.noteTitle)
-//                    }
-//                }
-//            }
-//
-//            override fun publishResults(p0: CharSequence?, p1: FilterResults?) {
-//                TODO("Not yet implemented")
-//            }
-//
-//        }
-//        return  filter
-//    }
 
-fun filtering(newFilteredList: ArrayList<Notes>) {
-noteList = newFilteredList
-    Log.d("MyAdapter","NoteList = $noteList")
-    notifyDataSetChanged()
-}
 }

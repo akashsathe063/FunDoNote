@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.example.fundonote.R
 import com.example.fundonote.HomeFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.navigation.NavigationView
 import de.hdodenhof.circleimageview.CircleImageView
 
 class HomeActivity : AppCompatActivity() {
@@ -25,6 +26,7 @@ class HomeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_home)
         val mainDrawer: DrawerLayout = findViewById(R.id.MainDrawer)
         var toolBar: Toolbar = findViewById(R.id.TOOLBAR)
+        var navView:NavigationView = findViewById(R.id.navView)
         setSupportActionBar(toolBar)
         //   toolBar.showOverflowMenu()
         actionBarDrawerToggle = ActionBarDrawerToggle(
@@ -38,6 +40,23 @@ class HomeActivity : AppCompatActivity() {
 
         replaceFragment(HomeFragment())
 
+       navView.setNavigationItemSelectedListener {
+           when(it.itemId){
+               R.id.nav_home ->{
+                   val fragment = HomeFragment()
+                   val transaction =
+                       (this as AppCompatActivity).supportFragmentManager.beginTransaction()
+                   transaction.replace(R.id.fragmaintContainer, fragment)
+                   transaction.addToBackStack(null)
+                   transaction.commit()
+
+               }
+               R.id.nav_Archive ->{
+                   replaceFragment(ArchiveNoteFragment())
+               }
+           }
+           true
+       }
 
     }
 
@@ -57,5 +76,6 @@ class HomeActivity : AppCompatActivity() {
         fragment_Transaction.replace(R.id.fragmaintContainer, fragment)
         fragment_Transaction.commit()
     }
+
 
 }
