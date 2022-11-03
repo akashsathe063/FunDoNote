@@ -1,4 +1,5 @@
 package com.example.fundonote.model
+
 import android.util.Log
 import com.example.fundonote.database.DBHelper
 import com.google.android.gms.tasks.OnSuccessListener
@@ -22,21 +23,21 @@ class NoteService(private val dbHelper: DBHelper) {
     }
 
     fun saveNote(note: Notes, listner: (AuthListner) -> Unit) {
-           val userId = firebaseAuth.currentUser?.uid.toString()
+        val userId = firebaseAuth.currentUser?.uid.toString()
         var fireStoreNote = HashMap<String, String>()
 
         fireStoreNote.put("NoteTitle", note.noteTitle)
         fireStoreNote.put("NoteDescription", note.noteDescription)
-        fireStoreNote.put("isArchive",note.isArchive.toString())
+        fireStoreNote.put("isArchive", note.isArchive.toString())
 
         firebaseAuth.currentUser?.let {
             var documentReference: DocumentReference =
                 fireStoreDataBase.collection("users").document(it.uid).collection("Notes")
                     .document()
-           // note.userId = it.uid
+            // note.userId = it.uid
             note.noteId = documentReference.id
             fireStoreNote.put("NoteId", note.noteId)
-        //    fireStoreNote.put("UserId", note.userId)
+            //    fireStoreNote.put("UserId", note.userId)
             documentReference.set(fireStoreNote).addOnSuccessListener(OnSuccessListener() {
 
                 fireStoreDataBase.collection("users").document(userId).collection("Notes")
@@ -56,13 +57,13 @@ class NoteService(private val dbHelper: DBHelper) {
             .addOnCompleteListener {
 
                 val noteList = ArrayList<Notes>()
-                if ( it.isSuccessful) {
+                if (it.isSuccessful) {
                     for (document in it.result) {
                         var archiveDoc = document["isArchive"].toString()
-                        var isArchive:Boolean
-                        isArchive = archiveDoc == "true"
+                        var isArchive: Boolean
+                        isArchive = (archiveDoc == "true")
                         val userNote: Notes = Notes(
-                          //  document["UserId"].toString(),
+                            //  document["UserId"].toString(),
                             document["NoteId"].toString(),
                             document["NoteTitle"].toString(),
                             document["NoteDescription"].toString(),
@@ -112,10 +113,10 @@ class NoteService(private val dbHelper: DBHelper) {
 
                 if (it.isSuccessful) {
                     var archiveDoc = it.result.getString("isArchive").toString()
-                    var isArchive:Boolean
+                    var isArchive: Boolean
                     isArchive = archiveDoc == "true"
                     val userNote: Notes = Notes(
-                 //       it.result.getString("UserId").toString(),
+                        //       it.result.getString("UserId").toString(),
                         it.result.getString("NoteId").toString(),
                         it.result.getString("NoteTitle").toString(),
                         it.result.getString("NoteDescription").toString(),
@@ -146,8 +147,8 @@ class NoteService(private val dbHelper: DBHelper) {
         fireStoreNote.put("NoteTitle", notes.noteTitle)
         fireStoreNote.put("NoteDescription", notes.noteDescription)
         fireStoreNote.put("NoteId", notes.noteId)
-        fireStoreNote.put("isArchive",notes.isArchive.toString())
-      //  fireStoreNote.put("isArchive","1")
+        fireStoreNote.put("isArchive", notes.isArchive.toString())
+        //  fireStoreNote.put("isArchive","1")
         var documentReference: DocumentReference =
             fireStoreDataBase.collection("users").document(userId).collection("Notes")
                 .document(noteId)
@@ -159,7 +160,6 @@ class NoteService(private val dbHelper: DBHelper) {
         })
 
     }
-
 
 
 }

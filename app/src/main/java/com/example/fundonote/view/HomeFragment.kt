@@ -18,6 +18,7 @@ import com.example.fundonote.databinding.FragmentSaveNoteBinding
 import com.example.fundonote.view.MyAdapter
 import com.example.fundonote.model.NoteService
 import com.example.fundonote.model.Notes
+import com.example.fundonote.model.RetrofitClient
 import com.example.fundonote.view.ArchiveNoteFragment
 import com.example.fundonote.view.CreateNote
 import com.example.fundonote.view.ProfileFragmet
@@ -26,6 +27,9 @@ import com.example.fundonote.viewmodel.NoteViewModelFactory
 import com.example.fundonote.viewmodel.UpdateNoteViewModel
 import com.example.fundonote.viewmodel.UpdateNoteViewModelFactory
 import de.hdodenhof.circleimageview.CircleImageView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -69,6 +73,7 @@ class HomeFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
 
         recyclerView.setHasFixedSize(true)
+        note = Notes()
         noteArrayList = arrayListOf<Notes>()
         newNoteArrayList = arrayListOf<Notes>()
         archiveNoteList = arrayListOf<Notes>()
@@ -92,14 +97,39 @@ class HomeFragment : Fragment() {
         var _Bundle = arguments?.getString("Noteid").toString()
         if (_Bundle != null) {
             noteId = _Bundle
-            isArchiveNote()
+            //isArchiveNote()
         }
-      //  readNote()
+        //  readNote()
         //   getNote()
         //  isArchiveNote()
-
+        getNoteUsingRetrofit()
         return binding.root
     }
+
+    private fun getNoteUsingRetrofit() {
+
+        RetrofitClient.getInstance()?.getMyApi()?.getNotes()
+            ?.enqueue(object : Callback<ArrayList<Notes>> {
+                override fun onResponse(
+                    call: Call<ArrayList<Notes>>,
+                    response: Response<ArrayList<Notes>>
+                ) {
+                    var note: ArrayList<Notes>? = response.body()
+                    if (response.isSuccessful) {
+                        recyclerView.adapter = note?.let { MyAdapter(it, requireContext()) }
+                        Log.d("HomeFragment", response.body().toString())
+                    }
+
+                }
+
+                override fun onFailure(call: Call<ArrayList<Notes>>, t: Throwable) {
+                    Log.d("HomeFragment", "Failure $t")
+                }
+
+            }
+            )
+    }
+
 
     fun readNote() {
         noteArrayList.clear()
@@ -222,29 +252,29 @@ class HomeFragment : Fragment() {
         }
     }
 
-    fun isArchiveNote() {
-        // val note = Notes(noteId = noteId, noteTitle = " ", noteDescription = " ",isArchive = "1")
-        updateNoteViewModel.readSingleNote(noteId)
-        updateNoteViewModel.readSigleNote.observe(viewLifecycleOwner, Observer {
-            if (it.status) {
-                note = Notes(
-                    noteId = it.note.noteId,
-                    noteTitle = it.note.noteTitle,
-                    noteDescription = it.note.noteDescription,
-                    isArchive = true
-                )
-                updateNoteViewModel.updateNote(noteId, note)
-                updateNoteViewModel.updateNotes.observe(viewLifecycleOwner, Observer {
-                    if (it.status) {
-
-                        readNote()
-
-                    }
-                })
-            }
-        })
-
-    }
+//    fun isArchiveNote() {
+//        // val note = Notes(noteId = noteId, noteTitle = " ", noteDescription = " ",isArchive = "1")
+//        updateNoteViewModel.readSingleNote(noteId)
+//        updateNoteViewModel.readSigleNote.observe(viewLifecycleOwner, Observer {
+//            if (it.status) {
+//                note = Notes(
+//                    noteId = it.note.noteId,
+//                    noteTitle = it.note.noteTitle,
+//                    noteDescription = it.note.noteDescription,
+//                    isArchive = true
+//                )
+//                updateNoteViewModel.updateNote(noteId, note)
+//                updateNoteViewModel.updateNotes.observe(viewLifecycleOwner, Observer {
+//                    if (it.status) {
+//
+//                        readNote()
+//
+//                    }
+//                })
+//            }
+//        })
+//
+//    }
 }
 
 

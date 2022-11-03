@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.getSystemService
 import com.example.fundonote.databinding.FragmentSetRemainderBinding
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -32,7 +33,7 @@ class SetRemainderFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentSetRemainderBinding.inflate(inflater, container, false)
-        return binding.root
+
         createNotificationChannel()
         binding.btnselectTime.setOnClickListener {
             showTimePicker()
@@ -44,15 +45,16 @@ class SetRemainderFragment : Fragment() {
 
             cancelAlarm()
         }
+        return binding.root
     }
 
     private fun cancelAlarm() {
 
 
         alarmManager =  activity?.getSystemService(ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, AlarmReciver::class.java)
+        val intent = Intent(requireContext(), AlarmReciver::class.java)
 
-        pendingIntet = PendingIntent.getBroadcast(context,0,intent,0)
+        pendingIntet = PendingIntent.getBroadcast(requireContext(),0,intent,0)
 
         alarmManager.cancel(pendingIntet)
         Toast.makeText(context,"Alarm canceled",Toast.LENGTH_LONG).show()
@@ -62,9 +64,9 @@ class SetRemainderFragment : Fragment() {
     private fun setAlarm() {
 
        alarmManager =  activity?.getSystemService(ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, AlarmReciver::class.java)
+        val intent = Intent(requireContext(), AlarmReciver::class.java)
 
-        pendingIntet = PendingIntent.getBroadcast(context,0,intent,0)
+        pendingIntet = PendingIntent.getBroadcast(requireContext(),0,intent,0)
 
         alarmManager.setRepeating(
 
@@ -75,13 +77,15 @@ class SetRemainderFragment : Fragment() {
     }
 
     private fun showTimePicker() {
+
+
        picker = MaterialTimePicker.Builder()
            .setTimeFormat(TimeFormat.CLOCK_12H)
            .setHour(12)
            .setMinute(0)
            .setTitleText("Select Alarm Time")
            .build()
-        picker.show( (context as AppCompatActivity).supportFragmentManager,"note")
+        picker.show( requireFragmentManager(),"note")
 
         picker.addOnPositiveButtonClickListener {
 
@@ -109,7 +113,7 @@ class SetRemainderFragment : Fragment() {
             val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel("note",name, importance)
             channel.description = description
-            val notificationManager = activity?.getSystemService(NotificationManager::class.java)
+            val notificationManager = getSystemService(requireContext(),NotificationManager::class.java)
 
             notificationManager?.createNotificationChannel(channel)
         }
