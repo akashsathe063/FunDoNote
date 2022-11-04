@@ -15,10 +15,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.fundonote.database.DBHelper
 import com.example.fundonote.databinding.FragmentSaveNoteBinding
+import com.example.fundonote.model.*
 import com.example.fundonote.view.MyAdapter
-import com.example.fundonote.model.NoteService
-import com.example.fundonote.model.Notes
-import com.example.fundonote.model.RetrofitClient
 import com.example.fundonote.view.ArchiveNoteFragment
 import com.example.fundonote.view.CreateNote
 import com.example.fundonote.view.ProfileFragmet
@@ -48,6 +46,8 @@ class HomeFragment : Fragment() {
     private lateinit var isArchive: String
     private lateinit var archiveNote: ArchiveNoteFragment
     private lateinit var note: Notes
+
+    // private lateinit var fields:Fields
     var gridFlag: Int = 0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -74,6 +74,7 @@ class HomeFragment : Fragment() {
 
         recyclerView.setHasFixedSize(true)
         note = Notes()
+
         noteArrayList = arrayListOf<Notes>()
         newNoteArrayList = arrayListOf<Notes>()
         archiveNoteList = arrayListOf<Notes>()
@@ -109,22 +110,45 @@ class HomeFragment : Fragment() {
     private fun getNoteUsingRetrofit() {
 
         RetrofitClient.getInstance()?.getMyApi()?.getNotes()
-            ?.enqueue(object : Callback<ArrayList<Notes>> {
+            ?.enqueue(object : Callback<RetrofitRetrive> {
                 override fun onResponse(
-                    call: Call<ArrayList<Notes>>,
-                    response: Response<ArrayList<Notes>>
+                    call: Call<RetrofitRetrive>,
+                    response: Response<RetrofitRetrive>
                 ) {
-                    var note: ArrayList<Notes>? = response.body()
-                    if (response.isSuccessful) {
-                        recyclerView.adapter = note?.let { MyAdapter(it, requireContext()) }
-                        Log.d("HomeFragment", response.body().toString())
-                    }
+//                    var note: ArrayList<Notes>? = response.body()
+//                    if (response.isSuccessful) {
+//
+//                        recyclerView.adapter = note?.let { MyAdapter(it, requireContext()) }
+//                        Log.d("HomeFragment", response.body().toString())
+//                    }
+                    var jsonData: RetrofitRetrive? = response.body()
+                    var notesArrayList: ArrayList<Notes> = arrayListOf<Notes>()
+                    if (jsonData != null) {
+                        jsonData.Documents.forEach() {
+                            var archivDoc = it.fields.isArchive.stringValue
+                            var isArchive: Boolean
+                            isArchive = (archivDoc == "true")
 
+                            var note: Notes = Notes(
+                                it.fields.NoteId.stringValue,
+                                it.fields.NoteTitle.stringvalue,
+                                it.fields.NoteDescription.stringValue,
+                                isArchive
+                            )
+
+                            notesArrayList.add(note)
+
+                        }
+                        //    recyclerView.adapter = MyAdapter(notesArrayList, requireContext())
+                        Log.d("HomeFragment", "@@@$notesArrayList")
+
+                    }
                 }
 
-                override fun onFailure(call: Call<ArrayList<Notes>>, t: Throwable) {
+                override fun onFailure(call: Call<RetrofitRetrive>, t: Throwable) {
                     Log.d("HomeFragment", "Failure $t")
                 }
+
 
             }
             )
@@ -276,11 +300,3 @@ class HomeFragment : Fragment() {
 //
 //    }
 }
-
-
-
-
-
-
-
-

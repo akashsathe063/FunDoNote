@@ -10,7 +10,7 @@ const val PROJECT_ID = "fundonote-e92af"
 const val API_KEY = "AIzaSyAlo_lIv_3l4XQX--8c7jWcLRwJDC077EE"
 interface MyApi {
     @GET("$PROJECT_ID/databases/(default)/documents/users/f1tWny1U8NUUfIOQUkWyzk4Ii7i1/Notes?key=$API_KEY")
-      fun getNotes():Call<ArrayList<Notes>>
+      fun getNotes():Call<RetrofitRetrive>
 
       //https://firestore.googleapis.com/v1/projects/fundonote-e92af/databases/(default)/documents/users/documents/Notes?apiKey=AIzaSyAlo_lIv_3l4XQX--8c7jWcLRwJDC077EE
 }
