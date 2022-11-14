@@ -7,5 +7,4 @@
     android:background="@color/green"
     app:navigationIcon="@drawable/ic_baseline_menu_24">
 
-
 </androidx.appcompat.widget.Toolbar>

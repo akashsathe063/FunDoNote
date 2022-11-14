@@ -26,6 +26,7 @@ class ArchiveNoteFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var archiveNoteArrayList: ArrayList<Notes>
     private lateinit var unArchiveNoteList: ArrayList<Notes>
+    private lateinit var tempArrayList: ArrayList<Notes>
     private lateinit var noteViewModel: NoteViewModel
     private lateinit var noteId: String
     private lateinit var notes: Notes
@@ -48,6 +49,7 @@ class ArchiveNoteFragment : Fragment() {
         recyclerView.setHasFixedSize(true)
         archiveNoteArrayList = arrayListOf<Notes>()
         unArchiveNoteList = arrayListOf<Notes>()
+        tempArrayList = arrayListOf<Notes>()
 
         readArchiveNote()
 
@@ -59,25 +61,33 @@ class ArchiveNoteFragment : Fragment() {
         noteViewModel.getNote()
         noteViewModel.getNotes.observe(viewLifecycleOwner, Observer {
             if (it.status) {
+                Log.d("SaveNoteFragment", it.noteList.size.toString())
                 Toast.makeText(context, it.msg, Toast.LENGTH_SHORT).show()
-                archiveNoteArrayList = it.noteList
-                //   newNoteArrayList.addAll(tempNoteArrayList)
-                //    archiveNoteList.addAll(noteArrayList)
-                archiveNoteArrayList.forEach {
-                    if (it.isArchive == false) {
-                        unArchiveNoteList.add(it)
-                        //           archiveNote.readArchiveNote(archiveNoteList)
+                tempArrayList.clear()
+                archiveNoteArrayList.clear()
+                unArchiveNoteList.clear()
+                tempArrayList = it.noteList
+
+//                newNoteArrayList.forEach {
+//                    if (it.isArchive == true) {
+//                        archiveNoteList.add(it)
+//                        //           archiveNote.readArchiveNote(archiveNoteList)
+//                    } else {
+//                        noteArrayList.add(it)
+//                    }
+//                }
+                for (note in tempArrayList) {
+                    if (note.isArchive == false) {
+                        unArchiveNoteList.add(note)
                     } else {
-                        archiveNoteArrayList.add(it)
-                        Log.d("ArhiveNoteFragment", "${archiveNoteArrayList.size}")
-                        recyclerView.adapter = MyAdapter(archiveNoteArrayList, requireContext())
+                        archiveNoteArrayList.add(note)
                     }
                 }
-
+                recyclerView.adapter = MyAdapter(archiveNoteArrayList, requireContext())
             }
         })
-    }
 
+    }
 }
 
 

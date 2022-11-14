@@ -40,9 +40,12 @@ class HomeFragment : Fragment() {
     private lateinit var newNoteArrayList: ArrayList<Notes>
     private lateinit var archiveNoteList: ArrayList<Notes>
     private lateinit var tempNoteArrayList: ArrayList<Notes>
+
+
     private lateinit var noteViewModel: NoteViewModel
     private lateinit var updateNoteViewModel: UpdateNoteViewModel
     private lateinit var noteId: String
+    private lateinit var archiveNoteId:String
     private lateinit var isArchive: String
     private lateinit var archiveNote: ArchiveNoteFragment
     private lateinit var note: Notes
@@ -63,7 +66,7 @@ class HomeFragment : Fragment() {
         updateNoteViewModel =
             ViewModelProvider(
                 this,
-                UpdateNoteViewModelFactory(NoteService(DBHelper(requireContext())))
+                 UpdateNoteViewModelFactory(NoteService(DBHelper(requireContext())))
             ).get(
                 UpdateNoteViewModel::class.java
             )
@@ -97,13 +100,12 @@ class HomeFragment : Fragment() {
 
         var _Bundle = arguments?.getString("Noteid").toString()
         if (_Bundle != null) {
-            noteId = _Bundle
-            //isArchiveNote()
+            archiveNoteId = _Bundle
+            isArchiveNote()
         }
         //  readNote()
         //   getNote()
-        //  isArchiveNote()
-        getNoteUsingRetrofit()
+        //   getNoteUsingRetrofit()
         return binding.root
     }
 
@@ -124,14 +126,14 @@ class HomeFragment : Fragment() {
                     var jsonData: RetrofitRetrive? = response.body()
                     var notesArrayList: ArrayList<Notes> = arrayListOf<Notes>()
                     if (jsonData != null) {
-                        jsonData.Documents.forEach() {
+                        jsonData.documents.forEach() {
                             var archivDoc = it.fields.isArchive.stringValue
                             var isArchive: Boolean
                             isArchive = (archivDoc == "true")
 
                             var note: Notes = Notes(
                                 it.fields.NoteId.stringValue,
-                                it.fields.NoteTitle.stringvalue,
+                                it.fields.NoteTitle.stringValue,
                                 it.fields.NoteDescription.stringValue,
                                 isArchive
                             )
@@ -139,10 +141,11 @@ class HomeFragment : Fragment() {
                             notesArrayList.add(note)
 
                         }
-                        //    recyclerView.adapter = MyAdapter(notesArrayList, requireContext())
+                        recyclerView.adapter = MyAdapter(notesArrayList, requireContext())
                         Log.d("HomeFragment", "@@@$notesArrayList")
 
                     }
+                    Log.d("HomeFragment", "${response.body()}")
                 }
 
                 override fun onFailure(call: Call<RetrofitRetrive>, t: Throwable) {
@@ -156,21 +159,32 @@ class HomeFragment : Fragment() {
 
 
     fun readNote() {
-        noteArrayList.clear()
+     //   noteArrayList.clear()
         noteViewModel.getNote()
         noteViewModel.getNotes.observe(viewLifecycleOwner, Observer {
             if (it.status) {
                 Log.d("SaveNoteFragment", it.noteList.size.toString())
                 Toast.makeText(context, it.msg, Toast.LENGTH_SHORT).show()
-                newNoteArrayList = it.noteList
-                //   newNoteArrayList.addAll(tempNoteArrayList)
-                //    archiveNoteList.addAll(noteArrayList)
-                newNoteArrayList.forEach {
-                    if (it.isArchive == true) {
-                        archiveNoteList.add(it)
-                        //           archiveNote.readArchiveNote(archiveNoteList)
-                    } else {
-                        noteArrayList.add(it)
+                tempNoteArrayList.clear()
+                archiveNoteList.clear()
+                noteArrayList.clear()
+                tempNoteArrayList = it.noteList
+                newNoteArrayList.addAll(tempNoteArrayList)
+
+//                newNoteArrayList.forEach {
+//                    if (it.isArchive == true) {
+//                        archiveNoteList.add(it)
+//                        //           archiveNote.readArchiveNote(archiveNoteList)
+//                    } else {
+//                        noteArrayList.add(it)
+//                    }
+//                }
+                for(note in tempNoteArrayList){
+                    if(note.isArchive == true){
+                        archiveNoteList.add(note)
+                    }
+                    else{
+                        noteArrayList.add(note)
                     }
                 }
                 recyclerView.adapter = MyAdapter(noteArrayList, requireContext())
@@ -276,27 +290,30 @@ class HomeFragment : Fragment() {
         }
     }
 
-//    fun isArchiveNote() {
-//        // val note = Notes(noteId = noteId, noteTitle = " ", noteDescription = " ",isArchive = "1")
-//        updateNoteViewModel.readSingleNote(noteId)
-//        updateNoteViewModel.readSigleNote.observe(viewLifecycleOwner, Observer {
-//            if (it.status) {
-//                note = Notes(
-//                    noteId = it.note.noteId,
-//                    noteTitle = it.note.noteTitle,
-//                    noteDescription = it.note.noteDescription,
-//                    isArchive = true
-//                )
-//                updateNoteViewModel.updateNote(noteId, note)
-//                updateNoteViewModel.updateNotes.observe(viewLifecycleOwner, Observer {
-//                    if (it.status) {
-//
-//                        readNote()
-//
-//                    }
-//                })
-//            }
-//        })
-//
-//    }
+    fun isArchiveNote() {
+        // val note = Notes(noteId = noteId, noteTitle = " ", noteDescription = " ",isArchive = "1")
+        updateNoteViewModel.readSingleNote(archiveNoteId )
+        updateNoteViewModel.readSigleNote.observe(viewLifecycleOwner, Observer {
+            if (it.status) {
+                note = Notes(
+                    noteId = it.note.noteId,
+                    noteTitle = it.note.noteTitle,
+                    noteDescription = it.note.noteDescription,
+                    isArchive = true
+                )
+                updateNoteViewModel.updateNote(archiveNoteId, note)
+                updateNoteViewModel.updateNotes.observe(viewLifecycleOwner, Observer {
+                    if (it.status) {
+                       Toast.makeText(context,"notes  archived",Toast.LENGTH_LONG).show()
+                        readNote()
+
+                    }
+                    else{
+                        Toast.makeText(context,"notes   not archived",Toast.LENGTH_LONG).show()
+                    }
+                })
+            }
+        })
+
+    }
 }
